@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PAT Inspection Logger</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <header>
+      <h1>PAT Inspection Logger</h1>
+      <nav>
+        <% if session[:user_id] %>
+          <%= link_to "New Inspection", new_inspection_path %>
+          <%= link_to "All Inspections", inspections_path %>
+          <%= button_to "Logout", logout_path, method: :delete %>
+        <% else %>
+          <%= link_to "Login", login_path %>
+          <%= link_to "Sign Up", signup_path %>
+        <% end %>
+      </nav>
+    </header>
+
+    <main>
+      <% flash.each do |type, message| %>
+        <div class="flash <%= type %>">
+          <%= message %>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>

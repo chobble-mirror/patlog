@@ -1,0 +1,99 @@
+<h2>PAT Inspection Details</h2>
+
+<div class="inspection-card">
+  <div class="inspection-header">
+    <h3><%= @inspection.description %></h3>
+    <div class="inspection-status <%= @inspection.passed ? 'pass' : 'fail' %>">
+      <%= @inspection.passed ? 'PASS' : 'FAIL' %>
+    </div>
+  </div>
+
+  <div class="inspection-section">
+    <h4>Equipment Details</h4>
+    <table>
+      <tr>
+        <th>Serial Number / Asset ID:</th>
+        <td><%= @inspection.serial %></td>
+      </tr>
+      <tr>
+        <th>Description:</th>
+        <td><%= @inspection.description %></td>
+      </tr>
+      <tr>
+        <th>Location:</th>
+        <td><%= @inspection.location %></td>
+      </tr>
+      <tr>
+        <th>Equipment Class:</th>
+        <td>Class <%= @inspection.equipment_class %> (<%= @inspection.equipment_class == 1 ? 'Earthed' : 'Double Insulated' %>)</td>
+      </tr>
+    </table>
+  </div>
+  
+  <div class="inspection-section">
+    <h4>Inspection Details</h4>
+    <table>
+      <tr>
+        <th>Inspection Date:</th>
+        <td><%= @inspection.inspection_date&.strftime('%d/%m/%Y') %></td>
+      </tr>
+      <tr>
+        <th>Next Inspection Due:</th>
+        <td><%= @inspection.reinspection_date&.strftime('%d/%m/%Y') %></td>
+      </tr>
+      <tr>
+        <th>Inspector:</th>
+        <td><%= @inspection.inspector %></td>
+      </tr>
+    </table>
+  </div>
+  
+  <div class="inspection-section">
+    <h4>Test Results</h4>
+    <table>
+      <tr>
+        <th>Visual Inspection:</th>
+        <td class="<%= @inspection.visual_pass ? 'pass' : 'fail' %>">
+          <%= @inspection.visual_pass ? 'PASS' : 'FAIL' %>
+        </td>
+      </tr>
+      <tr>
+        <th>Fuse Rating:</th>
+        <td><%= @inspection.fuse_rating %> A</td>
+      </tr>
+      <tr>
+        <th>Earth Continuity:</th>
+        <td><%= @inspection.earth_ohms %> Ω</td>
+      </tr>
+      <tr>
+        <th>Insulation Resistance:</th>
+        <td><%= @inspection.insulation_mohms %> MΩ</td>
+      </tr>
+      <tr>
+        <th>Leakage Current:</th>
+        <td><%= @inspection.leakage %> mA</td>
+      </tr>
+      <tr>
+        <th>Overall Result:</th>
+        <td class="<%= @inspection.passed ? 'pass' : 'fail' %>">
+          <%= @inspection.passed ? 'PASS' : 'FAIL' %>
+        </td>
+      </tr>
+    </table>
+  </div>
+  
+  <% if @inspection.comments.present? %>
+    <div class="inspection-section">
+      <h4>Comments</h4>
+      <div class="comments">
+        <%= simple_format(@inspection.comments) %>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="action-buttons">
+    <%= link_to "Edit", edit_inspection_path(@inspection), class: 'button edit' %>
+    <%= link_to "Back to List", inspections_path, class: 'button back' %>
+    <%= button_to "Delete", inspection_path(@inspection), method: :delete, class: 'button delete', data: { confirm: 'Are you sure you want to delete this inspection?' } %>
+  </div>
+</div>
