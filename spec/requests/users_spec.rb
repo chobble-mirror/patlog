@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Users", type: :request do
   describe "GET /signup" do
@@ -18,7 +18,7 @@ RSpec.describe "Users", type: :request do
           password_confirmation: "password"
         }
       }
-      
+
       expect(response).to have_http_status(:redirect)
     end
   end

@@ -10,11 +10,11 @@ gem "sqlite3", ">= 1.4"
 gem "puma", ">= 5.0"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "tzinfo-data", platforms: %i[windows jruby]
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem "debug", platforms: %i[mri windows], require: "debug/prelude"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
@@ -23,15 +23,18 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   # Testing
-  gem 'rspec-rails'
+  gem "rspec-rails"
+
+  # Ruby code formatter and linter
+  gem "standard", require: false
 end
 
 # PDF generation
-gem 'prawn'
-gem 'prawn-table'
+gem "prawn"
+gem "prawn-table"
 
 # Passwords
-gem 'bcrypt'
+gem "bcrypt"
 
 gem "importmap-rails", "~> 2.1"
 
