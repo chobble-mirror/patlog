@@ -22,14 +22,14 @@
           buildInputs = with pkgs; [
             ruby_3_4
             rubyPackages_3_4.railties
+            rubyPackages_3_4.ruby-vips
             sqlite
             nodejs
             imagemagick
           ];
 
           shellHook = ''
-            echo "Ruby $(ruby --version) with Rails $(rails --version) development environment"
-            echo "Use './setup_rails_app.sh' to set up the project"
+            echo "Ruby $(ruby --version) with Rails $(rails --version)"
           '';
         };
       }
