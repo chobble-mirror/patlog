@@ -17,6 +17,17 @@ class InspectionsController < ApplicationController
 
   def create
     @inspection = Inspection.new(inspection_params)
+    
+    if @inspection.image.attached? && @inspection.image.content_type != "image/jpeg"
+      # Convert non-jpeg images to jpeg
+      blob = ActiveStorage::Blob.create_and_upload!(
+        io: StringIO.new(process_image_to_jpeg(@inspection.image)),
+        filename: "#{@inspection.image.filename.base}.jpg",
+        content_type: "image/jpeg"
+      )
+      @inspection.image.purge
+      @inspection.image.attach(blob)
+    end
 
     if @inspection.save
       flash[:success] = "Inspection record created successfully!"
@@ -32,6 +43,23 @@ class InspectionsController < ApplicationController
 
   def update
     @inspection = Inspection.find(params[:id])
+    
+    if params[:inspection][:image].present?
+      if params[:inspection][:image].content_type != "image/jpeg"
+        # Convert non-jpeg images to jpeg
+        blob = ActiveStorage::Blob.create_and_upload!(
+          io: StringIO.new(process_image_to_jpeg(params[:inspection][:image])),
+          filename: "#{params[:inspection][:image].original_filename.split('.')[0]}.jpg",
+          content_type: "image/jpeg"
+        )
+        
+        # Attach the processed image blob
+        @inspection.image.attach(blob)
+        
+        # Remove image from params to prevent double attachment
+        params[:inspection].delete(:image)
+      end
+    end
 
     if @inspection.update(inspection_params)
       flash[:success] = "Inspection record updated successfully!"
@@ -160,6 +188,21 @@ class InspectionsController < ApplicationController
         pdf.text @inspection.comments
       end
 
+      # Image if present
+      if @inspection.image.attached?
+        pdf.move_down 20
+        pdf.text "Equipment Image", size: 14, style: :bold
+        pdf.stroke_horizontal_rule
+        pdf.move_down 10
+        
+        begin
+          image_path = ActiveStorage::Blob.service.path_for(@inspection.image.key)
+          pdf.image image_path, position: :center, fit: [400, 300]
+        rescue StandardError => e
+          pdf.text "Image could not be displayed: #{e.message}", style: :italic
+        end
+      end
+
       # Footer
       pdf.move_down 30
       pdf.text "This certificate was generated on #{Time.now.strftime("%d/%m/%Y at %H:%M")}", size: 10, align: :center, style: :italic
@@ -189,7 +232,23 @@ class InspectionsController < ApplicationController
       :insulation_mohms,
       :leakage,
       :passed,
-      :comments
+      :comments,
+      :image
     )
+  end
+
+  def process_image_to_jpeg(image)
+    require "image_processing/mini_magick"
+
+    # Handle both ActiveStorage attachments and direct uploads
+    image_source = image.is_a?(ActionDispatch::Http::UploadedFile) ? image.path : image.download
+
+    processed = ImageProcessing::MiniMagick
+      .source(image_source)
+      .resize_to_limit(1200, 1200)
+      .convert("jpg")
+      .call
+
+    File.read(processed.path)
   end
 end

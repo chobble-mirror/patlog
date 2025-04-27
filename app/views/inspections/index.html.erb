@@ -12,6 +12,7 @@
     <table class="inspections-table">
       <thead>
         <tr>
+          <th>Image</th>
           <th>Serial/Asset</th>
           <th>Description</th>
           <th>Location</th>
@@ -24,6 +25,15 @@
       <tbody>
         <% @inspections.each do |inspection| %>
           <tr>
+            <td class="thumbnail-cell">
+              <% if inspection.image.attached? %>
+                <%= link_to inspection_path(inspection) do %>
+                  <%= image_tag url_for(inspection.image.variant(resize_to_limit: [64, 64])), class: 'thumbnail' %>
+                <% end %>
+              <% else %>
+                <div class="no-image">No image</div>
+              <% end %>
+            </td>
             <td><%= inspection.serial %></td>
             <td><%= inspection.description %></td>
             <td><%= inspection.location %></td>

@@ -94,6 +94,18 @@
       <%= form.label :comments, "Comments" %>
       <%= form.text_area :comments, rows: 3 %>
     </div>
+
+    <div>
+      <%= form.label :image, "Equipment Image" %>
+      <%= form.file_field :image, accept: 'image/jpeg,image/png' %>
+      <span class="help-text">Upload a JPEG or PNG image (will be converted to JPEG)</span>
+      <% if @inspection.image.attached? %>
+        <div class="current-image">
+          <p>Current image:</p>
+          <%= image_tag url_for(@inspection.image.variant(resize_to_limit: [200, 200])) %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <div>

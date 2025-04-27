@@ -288,6 +288,55 @@ RSpec.describe Inspection, type: :model do
     end
   end
 
+  describe "image attachment functionality" do
+    it "can have an image attached" do
+      inspection = Inspection.new(
+        inspector: "Test Inspector",
+        serial: "IMAGE001",
+        description: "Test Equipment with Image",
+        location: "Test Location",
+        equipment_class: 1,
+        visual_pass: true,
+        fuse_rating: 13,
+        earth_ohms: 0.5,
+        insulation_mohms: 200,
+        leakage: 0.2,
+        passed: true
+      )
+      
+      # Create a test image
+      file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/jpeg')
+      inspection.image.attach(file)
+      
+      expect(inspection).to be_valid
+      expect(inspection.image).to be_attached
+    end
+    
+    it "validates file size" do
+      inspection = Inspection.new(
+        inspector: "Test Inspector",
+        serial: "IMAGE002",
+        description: "Test Equipment with Large Image",
+        location: "Test Location",
+        equipment_class: 1,
+        visual_pass: true,
+        fuse_rating: 13,
+        earth_ohms: 0.5,
+        insulation_mohms: 200,
+        leakage: 0.2,
+        passed: true
+      )
+      
+      # Mock a very large file
+      allow_any_instance_of(ActiveStorage::Blob).to receive(:byte_size).and_return(20.megabytes)
+      file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/jpeg')
+      inspection.image.attach(file)
+      
+      expect(inspection).not_to be_valid
+      expect(inspection.errors[:image]).to include("cannot be larger than 10MB")
+    end
+  end
+
   describe "search functionality" do
     before do
       # Create test records for search
