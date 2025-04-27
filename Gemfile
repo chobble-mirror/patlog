@@ -28,6 +28,7 @@ end
 
 # PDF generation
 gem 'prawn'
+gem 'prawn-table'
 
 # Passwords
 gem 'bcrypt'

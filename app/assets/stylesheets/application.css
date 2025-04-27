@@ -245,6 +245,10 @@ textarea {
   background-color: #4CAF50;
 }
 
+.button.certificate {
+  background-color: #9c27b0;
+}
+
 /* Inspections Index Page */
 .search-box {
   margin-bottom: 20px;
