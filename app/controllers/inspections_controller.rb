@@ -68,6 +68,23 @@ class InspectionsController < ApplicationController
     end
 
     pdf_data = Prawn::Document.new do |pdf|
+      # Register external fonts for proper UTF-8 support
+      font_path = Rails.root.join("app", "assets", "fonts")
+      pdf.font_families.update(
+        "NotoSans" => {
+          normal: "#{font_path}/NotoSans-Regular.ttf",
+          bold: "#{font_path}/NotoSans-Bold.ttf",
+          italic: "#{font_path}/NotoSans-Regular.ttf",
+          bold_italic: "#{font_path}/NotoSans-Bold.ttf"
+        },
+        "NotoEmoji" => {
+          normal: "#{font_path}/NotoEmoji-Regular.ttf"
+        }
+      )
+      
+      # Use our UTF-8 compatible font throughout the document
+      pdf.font "NotoSans"
+      
       pdf.text "PAT Inspection Certificate", size: 20, style: :bold, align: :center
       pdf.move_down 20
 
