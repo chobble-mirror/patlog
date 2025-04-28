@@ -1,7 +1,9 @@
-<h2>Edit PAT Inspection</h2>
+<header>
+  <h2>Edit PAT Inspection</h2>
+</header>
 
 <%= render 'form' %>
 
-<div class="actions-container">
-  <%= link_to "Cancel", inspection_path(@inspection), class: 'button back' %>
-</div>
+<footer>
+  <%= link_to inspection_path(@inspection) do %><em>Cancel</em><% end %>
+</footer>

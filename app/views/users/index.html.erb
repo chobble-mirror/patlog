@@ -1,25 +1,31 @@
-<h2>Users</h2>
+<header>
+  <h2>Users</h2>
+</header>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Admin</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @users.each do |user| %>
+<article>
+  <table>
+    <thead>
       <tr>
-        <td><%= user.name %></td>
-        <td><%= user.email %></td>
-        <td><%= user.admin? ? "Yes" : "No" %></td>
-        <td>
-          <%= link_to "Edit", edit_user_path(user) %>
-          <%= button_to "Delete", user_path(user), method: :delete, data: { confirm: "Are you sure?" } unless user == current_user %>
-        </td>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Admin</th>
+        <th>Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.admin? ? "Yes" : "No" %></td>
+          <td>
+            <%= link_to edit_user_path(user) do %><em>Edit</em><% end %>
+            <% unless user == current_user %>
+              <%= button_to "Delete", user_path(user), method: :delete, data: { confirm: "Are you sure?" } %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</article>

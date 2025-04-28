@@ -1,24 +1,18 @@
-<h2>Login</h2>
-
 <%= form_with(scope: :session, url: login_path) do |form| %>
-  <div>
-    <%= form.label :email %>
-    <%= form.email_field :email %>
-  </div>
+  <%= form.label :email %>
+  <%= form.email_field :email %>
 
-  <div>
-    <%= form.label :password %>
-    <%= form.password_field :password %>
-  </div>
+  <%= form.label :password %>
+  <%= form.password_field :password %>
 
-  <div>
-    <%= form.label :remember_me %>
+  <%= form.label :remember_me do %>
     <%= form.check_box :remember_me %>
-  </div>
+    Remember Me
+  <% end %>
 
-  <div>
-    <%= form.submit "Login" %>
-  </div>
+  <%= form.submit "Login" %>
 <% end %>
 
-<p>New user? <%= link_to "Sign up now!", signup_path %></p>
+<footer>
+  <p>New user? <%= link_to "Sign up now!", signup_path %></p>
+</footer>

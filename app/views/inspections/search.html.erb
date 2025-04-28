@@ -1,16 +1,19 @@
-<h2>Search Results</h2>
-
-<%= render 'inspection_stats' %>
-
-<%= render 'search_form' %>
-
-<div class="search-results">
+<header>
+  <h2>Search Results</h2>
   <% if params[:query].present? %>
     <h3>Results for "<%= params[:query] %>"</h3>
   <% end %>
+</header>
 
+<%= render 'inspection_stats' %>
+
+<section>
+  <%= render 'search_form' %>
+</section>
+
+<article>
   <% if @inspections.any? %>
-    <table class="inspections-table">
+    <table>
       <thead>
         <tr>
           <th>Serial/Asset</th>
@@ -30,27 +33,29 @@
             <td><%= inspection.location %></td>
             <td><%= inspection.inspection_date&.strftime('%d/%m/%Y') %></td>
             <td><%= inspection.reinspection_date&.strftime('%d/%m/%Y') %></td>
-            <td class="<%= inspection.passed ? 'pass' : 'fail' %>">
-              <%= inspection.passed ? 'PASS' : 'FAIL' %>
+            <td>
+              <% if inspection.passed %>
+                <mark>PASS</mark>
+              <% else %>
+                <mark style="background-color:#f2dede;color:#a94442;">FAIL</mark>
+              <% end %>
             </td>
-            <td class="actions">
-              <%= link_to "View", inspection_path(inspection), class: 'action-link view' %>
-              <%= link_to "Edit", edit_inspection_path(inspection), class: 'action-link edit' %>
+            <td>
+              <%= link_to inspection_path(inspection) do %><strong>View</strong><% end %> 
+              <%= link_to edit_inspection_path(inspection) do %><em>Edit</em><% end %>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
   <% else %>
-    <div class="no-inspections">
-      <p>No matching inspection records found.</p>
-    </div>
+    <p>No matching inspection records found.</p>
   <% end %>
-</div>
+</article>
 
-<div class="actions-container">
-  <%= link_to "Back to All Inspections", inspections_path, class: 'button back' %>
+<footer>
+  <%= link_to inspections_path do %><em>Back to All Inspections</em><% end %>
   <% if current_user.can_create_inspection? %>
-    <%= link_to "New Inspection", new_inspection_path, class: 'button new' %>
+    <%= link_to new_inspection_path do %><strong>New Inspection</strong><% end %>
   <% end %>
-</div>
+</footer>

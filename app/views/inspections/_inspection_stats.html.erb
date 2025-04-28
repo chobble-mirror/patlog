@@ -1,5 +1,7 @@
 <% if current_user %>
-<div class="inspection-stats">
-  <p>Usage: <strong><%= current_user.inspections.count %> / <%= current_user.inspection_limit %></strong></p>
-</div>
+<article>
+  <aside>
+    <p>Usage: <strong><%= current_user.inspections.count %> / <%= current_user.inspection_limit %></strong></p>
+  </aside>
+</article>
 <% end %>

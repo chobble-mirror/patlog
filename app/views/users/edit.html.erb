@@ -1,49 +1,39 @@
-<h2>Edit User</h2>
+<header>
+  <h2>Edit User</h2>
+</header>
 
 <%= form_with(model: @user, local: true) do |form| %>
   <% if @user.errors.any? %>
-    <div class="error-messages">
+    <aside>
       <h3><%= pluralize(@user.errors.count, "error") %> prevented this user from being saved:</h3>
       <ul>
         <% @user.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
-    </div>
+    </aside>
   <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
+  <%= form.label :name %>
+  <%= form.text_field :name %>
 
-  <div class="field">
-    <%= form.label :email %>
-    <%= form.email_field :email %>
-  </div>
+  <%= form.label :email %>
+  <%= form.email_field :email %>
 
-  <div class="field">
-    <%= form.label :password, "New Password (leave blank if no change)" %>
-    <%= form.password_field :password %>
-  </div>
+  <%= form.label :password, "New Password (leave blank if no change)" %>
+  <%= form.password_field :password %>
 
-  <div class="field">
-    <%= form.label :password_confirmation %>
-    <%= form.password_field :password_confirmation %>
-  </div>
+  <%= form.label :password_confirmation %>
+  <%= form.password_field :password_confirmation %>
 
   <% if current_user.admin? %>
-  <div class="field">
     <%= form.label :inspection_limit %>
     <%= form.number_field :inspection_limit, min: 0 %>
-  </div>
   <% end %>
 
-  <div class="actions">
-    <%= form.submit "Update User" %>
-  </div>
+  <%= form.submit "Update User" %>
 <% end %>
 
-<div class="links">
-  <%= link_to "Back to Users", users_path %>
-</div>
+<footer>
+  <%= link_to users_path do %><em>Back to Users</em><% end %>
+</footer>

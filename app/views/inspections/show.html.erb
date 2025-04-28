@@ -1,14 +1,18 @@
-<h2>PAT Inspection Details</h2>
+<header>
+  <h2>PAT Inspection Details</h2>
+  <% if @inspection.passed %>
+    <mark>PASS</mark>
+  <% else %>
+    <mark style="background-color:#f2dede;color:#a94442;">FAIL</mark>
+  <% end %>
+</header>
 
-<div class="inspection-card">
-  <div class="inspection-header">
+<article>
+  <header>
     <h3><%= @inspection.description %></h3>
-    <div class="inspection-status <%= @inspection.passed ? 'pass' : 'fail' %>">
-      <%= @inspection.passed ? 'PASS' : 'FAIL' %>
-    </div>
-  </div>
+  </header>
 
-  <div class="inspection-section">
+  <section>
     <h4>Equipment Details</h4>
     <table>
       <tr>
@@ -36,9 +40,9 @@
         <td><%= @inspection.equipment_power.present? ? "#{@inspection.equipment_power} W" : "Not specified" %></td>
       </tr>
     </table>
-  </div>
+  </section>
   
-  <div class="inspection-section">
+  <section>
     <h4>Inspection Details</h4>
     <table>
       <tr>
@@ -54,21 +58,29 @@
         <td><%= @inspection.inspector %></td>
       </tr>
     </table>
-  </div>
+  </section>
   
-  <div class="inspection-section">
+  <section>
     <h4>Test Results</h4>
     <table>
       <tr>
         <th>Visual Inspection:</th>
-        <td class="<%= @inspection.visual_pass ? 'pass' : 'fail' %>">
-          <%= @inspection.visual_pass ? 'PASS' : 'FAIL' %>
+        <td>
+          <% if @inspection.visual_pass %>
+            <mark>PASS</mark>
+          <% else %>
+            <mark style="background-color:#f2dede;color:#a94442;">FAIL</mark>
+          <% end %>
         </td>
       </tr>
       <tr>
         <th>Appliance Plug Check:</th>
-        <td class="<%= @inspection.appliance_plug_check ? 'pass' : 'fail' %>">
-          <%= @inspection.appliance_plug_check ? 'PASS' : 'FAIL' %>
+        <td>
+          <% if @inspection.appliance_plug_check %>
+            <mark>PASS</mark>
+          <% else %>
+            <mark style="background-color:#f2dede;color:#a94442;">FAIL</mark>
+          <% end %>
         </td>
       </tr>
       <tr>
@@ -99,35 +111,40 @@
       <% end %>
       <tr>
         <th>Overall Result:</th>
-        <td class="<%= @inspection.passed ? 'pass' : 'fail' %>">
-          <%= @inspection.passed ? 'PASS' : 'FAIL' %>
+        <td>
+          <% if @inspection.passed %>
+            <mark>PASS</mark>
+          <% else %>
+            <mark style="background-color:#f2dede;color:#a94442;">FAIL</mark>
+          <% end %>
         </td>
       </tr>
     </table>
-  </div>
+  </section>
   
   <% if @inspection.comments.present? %>
-    <div class="inspection-section">
+    <section>
       <h4>Comments</h4>
-      <div class="comments">
+      <blockquote>
         <%= simple_format(@inspection.comments) %>
-      </div>
-    </div>
+      </blockquote>
+    </section>
   <% end %>
   
   <% if @inspection.image.attached? %>
-    <div class="inspection-section">
+    <section>
       <h4>Equipment Image</h4>
-      <div class="equipment-image">
+      <figure>
         <%= image_tag url_for(@inspection.image.variant(resize_to_limit: [800, 800])) %>
-      </div>
-    </div>
+        <figcaption>Equipment Photo</figcaption>
+      </figure>
+    </section>
   <% end %>
-  
-  <div class="action-buttons">
-    <%= link_to "Generate Certificate", certificate_inspection_path(@inspection), class: 'button certificate', target: '_blank' %>
-    <%= link_to "Edit", edit_inspection_path(@inspection), class: 'button edit' %>
-    <%= link_to "Back to List", inspections_path, class: 'button back' %>
-    <%= button_to "Delete", inspection_path(@inspection), method: :delete, class: 'button delete', data: { confirm: 'Are you sure you want to delete this inspection?' } %>
-  </div>
-</div>
+</article>
+
+<footer>
+  <%= link_to certificate_inspection_path(@inspection), target: '_blank' do %><strong>Generate Certificate</strong><% end %>
+  <%= link_to edit_inspection_path(@inspection) do %><strong>Edit</strong><% end %>
+  <%= link_to inspections_path do %><em>Back to List</em><% end %>
+  <%= button_to "Delete", inspection_path(@inspection), method: :delete, data: { confirm: 'Are you sure you want to delete this inspection?' } %>
+</footer>

@@ -1,10 +1,10 @@
-<h2>PAT Inspection Records</h2>
+<section>
+  <%= render 'search_form' %>
+</section>
 
-<%= render 'search_form' %>
-
-<div class="inspections-container">
+<article>
   <% if @inspections.any? %>
-    <table class="inspections-table">
+    <table>
       <thead>
         <tr>
           <th>Image</th>
@@ -20,13 +20,13 @@
       <tbody>
         <% @inspections.each do |inspection| %>
           <tr>
-            <td class="thumbnail-cell">
+            <td>
               <% if inspection.image.attached? %>
                 <%= link_to inspection_path(inspection) do %>
-                  <%= image_tag url_for(inspection.image.variant(resize_to_limit: [64, 64])), class: 'thumbnail' %>
+                  <%= image_tag url_for(inspection.image.variant(resize_to_limit: [64, 64])) %>
                 <% end %>
               <% else %>
-                <div class="no-image">No image</div>
+                <small>No image</small>
               <% end %>
             </td>
             <td><%= inspection.serial %></td>
@@ -34,28 +34,30 @@
             <td><%= inspection.location %></td>
             <td><%= inspection.inspection_date&.strftime('%d/%m/%Y') %></td>
             <td><%= inspection.reinspection_date&.strftime('%d/%m/%Y') %></td>
-            <td class="<%= inspection.passed ? 'pass' : 'fail' %>">
-              <%= inspection.passed ? 'PASS' : 'FAIL' %>
+            <td>
+              <% if inspection.passed %>
+                <mark>PASS</mark>
+              <% else %>
+                <mark style="background-color:#f2dede;color:#a94442;">FAIL</mark>
+              <% end %>
             </td>
-            <td class="actions">
-              <%= link_to "View", inspection_path(inspection), class: 'action-link view' %>
-              <%= link_to "Edit", edit_inspection_path(inspection), class: 'action-link edit' %>
+            <td>
+              <%= link_to inspection_path(inspection) do %><strong>View</strong><% end %>
+              <%= link_to edit_inspection_path(inspection) do %><em>Edit</em><% end %>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
   <% else %>
-    <div class="no-inspections">
-      <p>No inspection records found.</p>
-    </div>
+    <p>No inspection records found.</p>
   <% end %>
-</div>
+</article>
 
-<div class="actions-container">
+<footer>
   <% if current_user.can_create_inspection? %>
-    <%= link_to "New Inspection", new_inspection_path, class: 'button new' %>
+    <%= link_to new_inspection_path do %><strong>New Inspection</strong><% end %>
   <% end %>
-</div>
+</footer>
 
 <%= render 'inspection_stats' %>
