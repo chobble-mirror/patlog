@@ -1,10 +1,12 @@
 require "rails_helper"
 
 RSpec.describe "Inspections Search", type: :request do
+  let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
+  
   # Mock user login for all inspection tests since they require login
   before do
     allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_return(true)
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(double("User"))
+    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
   end
   
   describe "GET /inspections/search with esoteric test cases" do
@@ -13,6 +15,7 @@ RSpec.describe "Inspections Search", type: :request do
       
       # Create an inspection with a matching serial number
       Inspection.create!(
+        user: user,
         inspector: "Search Tester",
         serial: "AAAAA", # Just the first part will match
         description: "Long Query Test Equipment",
@@ -40,6 +43,7 @@ RSpec.describe "Inspections Search", type: :request do
     it "handles search queries with special characters" do
       # Create inspection with special characters
       Inspection.create!(
+        user: user,
         inspector: "Special Chars Tester",
         serial: "SPEC!@#$%^&*()_+",
         description: "Special Characters Equipment",
@@ -67,6 +71,7 @@ RSpec.describe "Inspections Search", type: :request do
     it "handles search queries with SQL injection patterns" do
       # Create an inspection with a normal serial
       Inspection.create!(
+        user: user,
         inspector: "SQL Injection Tester",
         serial: "NORMAL123",
         description: "SQL Injection Test Equipment",
@@ -104,6 +109,7 @@ RSpec.describe "Inspections Search", type: :request do
       # Create some test inspections
       3.times do |i|
         Inspection.create!(
+          user: user,
           inspector: "Empty Search Tester #{i}",
           serial: "EMPTY#{i}",
           description: "Empty Search Test Equipment #{i}",
@@ -132,6 +138,7 @@ RSpec.describe "Inspections Search", type: :request do
     it "handles Unicode and emoji in search queries" do
       # Create inspection with Unicode characters and emoji
       Inspection.create!(
+        user: user,
         inspector: "Unicode Tester",
         serial: "ÜNICØDÉ-😎-123",
         description: "Unicode Test Equipment",
@@ -170,6 +177,7 @@ RSpec.describe "Inspections Search", type: :request do
     it "handles case-insensitive searches correctly" do
       # Create inspection with mixed case serial
       Inspection.create!(
+        user: user,
         inspector: "Case Tester",
         serial: "MiXeDcAsE123",
         description: "Case Sensitivity Test Equipment",

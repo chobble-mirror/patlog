@@ -1,10 +1,12 @@
 require "rails_helper"
 
 RSpec.describe "Inspections PDF Generation", type: :request do
+  let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
+  
   # Mock user login for all inspection tests since they require login
   before do
     allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_return(true)
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(double("User"))
+    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
   end
   
   describe "GET /inspections/:id/certificate with esoteric test cases" do
@@ -13,6 +15,7 @@ RSpec.describe "Inspections PDF Generation", type: :request do
       extremely_long_text = "A" * 1000  # Long but not too long for the test
       
       inspection = Inspection.create!(
+        user: user,
         inspector: "PDF #{extremely_long_text}",
         serial: "PDF-LONG-#{extremely_long_text[0..50]}",
         description: "Long description #{extremely_long_text}",
@@ -39,6 +42,7 @@ RSpec.describe "Inspections PDF Generation", type: :request do
     it "handles Unicode and emoji in PDF generation" do
       # Create inspection with Unicode characters and emoji
       inspection = Inspection.create!(
+        user: user,
         inspector: "Jörgen Müller 👨‍🔧",
         serial: "PDF-ÜNICØDÉ-😎-123",
         description: "💻 MacBook Pro «Special»",
@@ -65,6 +69,7 @@ RSpec.describe "Inspections PDF Generation", type: :request do
     it "handles HTML-like content in text fields for PDF generation" do
       # Create inspection with HTML-like content
       inspection = Inspection.create!(
+        user: user,
         inspector: "<script>alert('XSS')</script>",
         serial: "PDF-HTML-123",
         description: "<b>Bold Text</b> and <i>italic</i>",
@@ -91,6 +96,7 @@ RSpec.describe "Inspections PDF Generation", type: :request do
     it "handles extremely precise numeric values in PDF generation" do
       # Create inspection with extreme numeric values
       inspection = Inspection.create!(
+        user: user,
         inspector: "Precision Tester PDF",
         serial: "PDF-PRECISE-123",
         description: "Precision Test Equipment",

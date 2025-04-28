@@ -1,9 +1,11 @@
 require "rails_helper"
 
 RSpec.describe Inspection, type: :model do
+  let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
+  
   describe "validations" do
     it "validates presence of required fields" do
-      inspection = Inspection.new
+      inspection = Inspection.new(user: user)
       expect(inspection).not_to be_valid
       expect(inspection.errors[:inspector]).to include("can't be blank")
       expect(inspection.errors[:serial]).to include("can't be blank")
@@ -13,6 +15,7 @@ RSpec.describe Inspection, type: :model do
 
     it "validates numericality of measurements" do
       inspection = Inspection.new(
+        user: user,
         inspector: "Test Inspector",
         serial: "TEST123",
         description: "Test Equipment",
@@ -29,12 +32,37 @@ RSpec.describe Inspection, type: :model do
       expect(inspection.errors[:insulation_mohms]).to include("must be greater than 0")
       expect(inspection.errors[:leakage]).to include("must be greater than 0")
     end
+    
+    it "requires a user" do
+      inspection = Inspection.new(
+        inspector: "Test Inspector",
+        serial: "TEST123",
+        description: "Test Equipment",
+        location: "Test Location",
+        equipment_class: 1,
+        earth_ohms: 0.5,
+        insulation_mohms: 200,
+        leakage: 0.2,
+        fuse_rating: 13
+      )
+      
+      expect(inspection).not_to be_valid
+      expect(inspection.errors[:user]).to include("must exist")
+    end
+  end
+  
+  describe "associations" do
+    it "belongs to a user" do
+      association = Inspection.reflect_on_association(:user)
+      expect(association.macro).to eq(:belongs_to)
+    end
   end
 
   describe "esoteric tests" do
     # Test with extremely high measurements
     it "handles extremely high measurement values" do
       inspection = Inspection.new(
+        user: user,
         inspector: "Test Inspector",
         serial: "HIGH123",
         description: "Test Equipment",
@@ -55,6 +83,7 @@ RSpec.describe Inspection, type: :model do
     # Test with Unicode characters and emoji in text fields
     it "handles Unicode characters and emoji in text fields" do
       inspection = Inspection.new(
+        user: user,
         inspector: "Jörgen Müller 👨‍🔧",
         serial: "ÜNICØDÉ-😎-123",
         description: "💻 MacBook Pro «Special»",
@@ -85,6 +114,7 @@ RSpec.describe Inspection, type: :model do
       extremely_long_text = "A" * 65535  # Text field typical max size
       
       inspection = Inspection.new(
+        user: user,
         inspector: "Max Length Tester",
         serial: "MAX123",
         description: "Max length test",
@@ -110,6 +140,7 @@ RSpec.describe Inspection, type: :model do
     # Test with SQL injection attempts in string fields
     it "safely handles strings that look like SQL injection attempts" do
       inspection = Inspection.new(
+        user: user,
         inspector: "Robert'); DROP TABLE inspections; --",
         serial: "'; SELECT * FROM users; --",
         description: "Equipment'); DELETE FROM inspections; --",
@@ -138,6 +169,7 @@ RSpec.describe Inspection, type: :model do
     # Test with boundary values for equipment_class
     it "validates equipment_class must be 1 or 2" do
       valid_inspection1 = Inspection.new(
+        user: user,
         inspector: "Test Inspector",
         serial: "CLASS1",
         description: "Class 1 Equipment",
@@ -150,6 +182,7 @@ RSpec.describe Inspection, type: :model do
       )
       
       valid_inspection2 = Inspection.new(
+        user: user,
         inspector: "Test Inspector", 
         serial: "CLASS2",
         description: "Class 2 Equipment",
@@ -162,6 +195,7 @@ RSpec.describe Inspection, type: :model do
       )
       
       invalid_inspection = Inspection.new(
+        user: user,
         inspector: "Test Inspector",
         serial: "CLASS3",
         description: "Invalid Class Equipment",
@@ -182,6 +216,7 @@ RSpec.describe Inspection, type: :model do
     # Test with boundary values for fuse_rating
     it "validates fuse_rating must be between 0 and 32" do
       valid_inspection = Inspection.new(
+        user: user,
         inspector: "Test Inspector",
         serial: "FUSE32",
         description: "Max Fuse Equipment",
@@ -194,6 +229,7 @@ RSpec.describe Inspection, type: :model do
       )
       
       invalid_inspection = Inspection.new(
+        user: user,
         inspector: "Test Inspector",
         serial: "FUSE33",
         description: "Invalid Fuse Equipment",
@@ -213,6 +249,7 @@ RSpec.describe Inspection, type: :model do
     # Test with precise floating point numbers
     it "handles precise decimal values for measurements" do
       inspection = Inspection.new(
+        user: user,
         inspector: "Precision Tester",
         serial: "PREC123",
         description: "Precision Test Equipment",
@@ -240,6 +277,7 @@ RSpec.describe Inspection, type: :model do
     it "performs search with special characters" do
       # Create inspection with special characters in serial
       Inspection.create!(
+        user: user,
         inspector: "Search Tester",
         serial: "SPEC!@#$%^&*()_+",
         description: "Special Characters Equipment",
@@ -264,6 +302,7 @@ RSpec.describe Inspection, type: :model do
     it "handles edge case dates" do
       # Far future dates
       future_inspection = Inspection.new(
+        user: user,
         inspector: "Future Tester",
         serial: "FUTURE123",
         description: "Future Equipment",
@@ -291,6 +330,7 @@ RSpec.describe Inspection, type: :model do
   describe "image attachment functionality" do
     it "can have an image attached" do
       inspection = Inspection.new(
+        user: user,
         inspector: "Test Inspector",
         serial: "IMAGE001",
         description: "Test Equipment with Image",
@@ -314,6 +354,7 @@ RSpec.describe Inspection, type: :model do
     
     it "validates file size" do
       inspection = Inspection.new(
+        user: user,
         inspector: "Test Inspector",
         serial: "IMAGE002",
         description: "Test Equipment with Large Image",
@@ -341,6 +382,7 @@ RSpec.describe Inspection, type: :model do
     before do
       # Create test records for search
       Inspection.create!(
+        user: user,
         inspector: "Search Tester 1",
         serial: "SEARCH001",
         description: "Search Test Equipment 1",
@@ -355,6 +397,7 @@ RSpec.describe Inspection, type: :model do
       )
       
       Inspection.create!(
+        user: user,
         inspector: "Search Tester 2",
         serial: "ANOTHER999",
         description: "Search Test Equipment 2",
@@ -386,6 +429,7 @@ RSpec.describe Inspection, type: :model do
       
       # Create a record with lowercase serial
       Inspection.create!(
+        user: user,
         inspector: "Case Tester",
         serial: "lowercase123",
         description: "Case Test Equipment",

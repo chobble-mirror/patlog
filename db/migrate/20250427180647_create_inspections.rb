@@ -16,6 +16,7 @@ class CreateInspections < ActiveRecord::Migration[7.2]
       t.boolean :passed
       t.text :comments
       t.string :image_path
+      t.references :user, null: false, foreign_key: true
 
       t.timestamps
     end

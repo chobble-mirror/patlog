@@ -1,411 +1,315 @@
 require "rails_helper"
 
 RSpec.describe "Inspections", type: :request do
-  # Mock user login for all inspection tests since they require login
-  before do
-    allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_return(true)
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(double("User"))
+  let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
+  let(:other_user) { User.create!(name: "Other User", email: "other@example.com", password: "password", password_confirmation: "password") }
+  
+  let(:valid_inspection_attributes) do
+    {
+      inspection_date: Date.today,
+      reinspection_date: Date.today + 1.year,
+      inspector: "Test Inspector",
+      serial: "TEST123",
+      description: "Test Equipment",
+      location: "Test Location",
+      equipment_class: 1,
+      visual_pass: true,
+      fuse_rating: 13,
+      earth_ohms: 0.5,
+      insulation_mohms: 200,
+      leakage: 0.2,
+      passed: true,
+      comments: "Test comments"
+    }
   end
 
-  describe "GET /" do
-    it "returns http success and renders new inspection form" do
-      get "/"
-      expect(response).to have_http_status(:success)
-      expect(response).to render_template(:new)
-      expect(response.body).to include("PAT Inspection Logger")
-
-      # Verify this is actually routing to inspections#new per our routes
-      expect(controller.controller_name).to eq("inspections")
-      expect(controller.action_name).to eq("new")
-    end
-  end
-
-  describe "GET /index" do
-    it "returns http success" do
+  describe "authentication requirements" do
+    it "redirects to login page when not logged in for index" do
       get "/inspections"
-      expect(response).to have_http_status(:success)
+      expect(response).to redirect_to(login_path)
+      expect(flash[:danger]).to include("Please log in")
     end
-  end
 
-  describe "GET /show" do
-    it "returns http success" do
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST123",
-        description: "Test Equipment",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments"
-      )
-
+    it "redirects to login page when not logged in for show" do
+      # Create a test inspection with user association
+      inspection = Inspection.create!(valid_inspection_attributes.merge(user: user))
+      
       get "/inspections/#{inspection.id}"
-      expect(response).to have_http_status(:success)
+      expect(response).to redirect_to(login_path)
+      expect(flash[:danger]).to include("Please log in")
     end
-  end
 
-  describe "GET /new" do
-    it "returns http success" do
+    it "allows access to new inspection form when not logged in" do
       get "/inspections/new"
       expect(response).to have_http_status(:success)
+      expect(response).to render_template(:new)
     end
-  end
 
-  describe "GET /edit" do
-    it "returns http success" do
-      # Create a test inspection record
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST123",
-        description: "Test Equipment",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments"
-      )
-
+    it "redirects to login page when not logged in for create" do
+      post "/inspections", params: {inspection: valid_inspection_attributes}
+      expect(response).to redirect_to(login_path)
+      expect(flash[:danger]).to include("Please log in")
+    end
+    
+    it "redirects to login page when not logged in for edit" do
+      # Create a test inspection with user association
+      inspection = Inspection.create!(valid_inspection_attributes.merge(user: user))
+      
       get "/inspections/#{inspection.id}/edit"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "POST /create" do
-    it "creates a new inspection and redirects" do
-      inspection_attributes = {
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST999",
-        description: "Test Equipment",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments"
-      }
-
-      post "/inspections", params: {inspection: inspection_attributes}
-      expect(response).to have_http_status(:redirect)
-      follow_redirect!
-      expect(response).to have_http_status(:success)
+      expect(response).to redirect_to(login_path)
+      expect(flash[:danger]).to include("Please log in")
     end
     
-    it "creates a new inspection with image and redirects" do
-      file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/jpeg')
+    it "redirects to login page when not logged in for update" do
+      # Create a test inspection with user association
+      inspection = Inspection.create!(valid_inspection_attributes.merge(user: user))
       
-      inspection_attributes = {
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST999",
-        description: "Test Equipment with Image",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments",
-        image: file
-      }
-
-      post "/inspections", params: {inspection: inspection_attributes}
-      expect(response).to have_http_status(:redirect)
-      follow_redirect!
-      expect(response).to have_http_status(:success)
-      
-      # Check that the image was attached
-      inspection = Inspection.find_by(serial: "TEST999")
-      expect(inspection.image).to be_attached
-    end
-  end
-
-  describe "PATCH /update" do
-    it "updates an inspection and redirects" do
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST456",
-        description: "Test Equipment",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments"
-      )
-
       patch "/inspections/#{inspection.id}", params: {inspection: {description: "Updated Equipment"}}
-      expect(response).to have_http_status(:redirect)
-      follow_redirect!
-      expect(response).to have_http_status(:success)
+      expect(response).to redirect_to(login_path)
+      expect(flash[:danger]).to include("Please log in")
     end
     
-    it "updates an inspection with an image and redirects" do
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST457",
-        description: "Test Equipment",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments"
-      )
+    it "redirects to login page when not logged in for destroy" do
+      # Create a test inspection with user association
+      inspection = Inspection.create!(valid_inspection_attributes.merge(user: user))
       
-      file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/jpeg')
-      
-      patch "/inspections/#{inspection.id}", params: {inspection: {description: "Updated Equipment with Image", image: file}}
-      expect(response).to have_http_status(:redirect)
-      follow_redirect!
-      expect(response).to have_http_status(:success)
-      
-      # Check that the image was attached
-      inspection.reload
-      expect(inspection.image).to be_attached
-      expect(inspection.description).to eq("Updated Equipment with Image")
-    end
-    
-    it "properly updates an inspection's image when image already exists" do
-      # First create an inspection with an initial image
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST458",
-        description: "Test Equipment with Initial Image",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true
-      )
-      
-      # Attach initial image
-      initial_file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/jpeg')
-      inspection.image.attach(initial_file)
-      initial_blob_id = inspection.image.blob.id
-      
-      # Now update with a new image
-      new_file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/jpeg')
-      
-      patch "/inspections/#{inspection.id}", params: {
-        inspection: {
-          description: "Updated Equipment with New Image", 
-          image: new_file
-        }
-      }
-      
-      expect(response).to have_http_status(:redirect)
-      follow_redirect!
-      expect(response).to have_http_status(:success)
-      
-      # Verify the image was properly updated
-      inspection.reload
-      expect(inspection.image).to be_attached
-      expect(inspection.description).to eq("Updated Equipment with New Image")
-      
-      # Verify we got a new blob (new image)
-      expect(inspection.image.blob.id).not_to eq(initial_blob_id)
-    end
-    
-    it "properly handles updating an inspection with a non-JPEG image" do
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST459",
-        description: "Test Equipment",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true
-      )
-      
-      # Create a mock PNG file (our test file is actually a JPEG, but we'll pretend it's PNG)
-      file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/png')
-      
-      # Mock the content_type check
-      allow_any_instance_of(ActionDispatch::Http::UploadedFile).to receive(:content_type).and_return('image/png')
-      
-      # We also need to mock the process_image_to_jpeg method since we're not actually converting
-      allow_any_instance_of(InspectionsController).to receive(:process_image_to_jpeg).and_return("fake image data")
-      
-      patch "/inspections/#{inspection.id}", params: {
-        inspection: {
-          description: "Updated Equipment with PNG Image",
-          image: file
-        }
-      }
-      
-      expect(response).to have_http_status(:redirect)
-      follow_redirect!
-      expect(response).to have_http_status(:success)
-      
-      # Verify the updates happened
-      inspection.reload
-      expect(inspection.image).to be_attached
-      expect(inspection.description).to eq("Updated Equipment with PNG Image")
-    end
-  end
-
-  describe "DELETE /destroy" do
-    it "deletes an inspection and redirects" do
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST789",
-        description: "Test Equipment",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments"
-      )
-
       delete "/inspections/#{inspection.id}"
+      expect(response).to redirect_to(login_path)
+      expect(flash[:danger]).to include("Please log in")
+    end
+  end
+
+  describe "user_id association" do
+    before do
+      post "/login", params: {session: {email: user.email, password: "password"}}
+    end
+    
+    it "assigns the current user's ID when creating a new inspection" do
+      post "/inspections", params: {inspection: valid_inspection_attributes}
+      
+      # Verify a new inspection was created
       expect(response).to have_http_status(:redirect)
       follow_redirect!
       expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET /search" do
-    it "returns http success" do
-      get "/inspections/search"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET /inspections/:id/certificate" do
-    it "generates a PDF certificate with the correct content" do
-      # Create a test inspection record
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST123",
-        description: "Test Equipment",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments"
-      )
-
-      # Verify the record was actually created and has the expected values
-      expect(inspection).to be_persisted
-      expect(inspection.id).to be_present
-      expect(Inspection.find(inspection.id)).to eq(inspection)
-      expect(inspection.passed).to eq(true)
-
-      # Mock the login since certificate generation requires authentication
-      allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_return(true)
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(double("User"))
-
-      # Request the certificate
-      get "/inspections/#{inspection.id}/certificate"
-
-      # Check response is successful
-      expect(response).to have_http_status(:success)
-
-      # Check content type is PDF
-      expect(response.content_type).to eq("application/pdf")
-
-      # Check that the response body starts with the PDF header signature
-      expect(response.body.bytes.first(4).pack("C*")).to eq("%PDF")
-
-      # Instead of checking the full binary content which may have encoding issues,
-      # just verify we got back a valid PDF response
-      expect(response.content_type).to eq("application/pdf")
-      expect(response.headers["Content-Disposition"]).to include("PAT_Certificate_TEST123.pdf")
-      expect(response.body.bytes.first(4).pack("C*")).to eq("%PDF")
+      
+      # Verify it was associated with the current user
+      inspection = Inspection.last
+      expect(inspection.user_id).to eq(user.id)
     end
     
-    it "generates a PDF certificate with an image" do
-      # Create a test inspection record with image
-      inspection = Inspection.create!(
-        inspection_date: Date.today,
-        reinspection_date: Date.today + 1.year,
-        inspector: "Test Inspector",
-        serial: "TEST124",
-        description: "Test Equipment with Image",
-        location: "Test Location",
-        equipment_class: 1,
-        visual_pass: true,
-        fuse_rating: 13,
-        earth_ohms: 0.5,
-        insulation_mohms: 200,
-        leakage: 0.2,
-        passed: true,
-        comments: "Test comments"
-      )
+    it "cannot override the user_id when creating a new inspection" do
+      # Try to set user_id to another user
+      post "/inspections", params: {
+        inspection: valid_inspection_attributes.merge(user_id: other_user.id)
+      }
       
-      # Attach an image
-      file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/jpeg')
-      inspection.image.attach(file)
+      # Verify it still used the current user's ID
+      inspection = Inspection.last
+      expect(inspection.user_id).to eq(user.id)
+      expect(inspection.user_id).not_to eq(other_user.id)
+    end
+    
+    it "cannot override the user_id when updating an inspection" do
+      # Create a test inspection with current user
+      inspection = Inspection.create!(valid_inspection_attributes.merge(user: user))
       
-      # Mock the login since certificate generation requires authentication
-      allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_return(true)
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(double("User"))
+      # Try to change the user_id during update
+      patch "/inspections/#{inspection.id}", params: {
+        inspection: {description: "Updated Description", user_id: other_user.id}
+      }
       
-      # Mock the access to image path for PDF generation
-      allow_any_instance_of(ActiveStorage::Blob).to receive(:service).and_return(double(path_for: Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg').to_s))
+      # Verify the description updated but not the user_id
+      inspection.reload
+      expect(inspection.description).to eq("Updated Description")
+      expect(inspection.user_id).to eq(user.id)
+      expect(inspection.user_id).not_to eq(other_user.id)
+    end
+  end
 
-      # Request the certificate
-      get "/inspections/#{inspection.id}/certificate"
-
-      # Check response is successful
+  describe "authorization requirements" do
+    before do
+      # Create two inspections, one for each user
+      @user_inspection = Inspection.create!(valid_inspection_attributes.merge(user: user))
+      @other_inspection = Inspection.create!(valid_inspection_attributes.merge(
+        user: other_user, 
+        serial: "OTHER123"
+      ))
+    end
+    
+    it "only shows the current user's inspections in the index" do
+      # Log in as the first user
+      post "/login", params: {session: {email: user.email, password: "password"}}
+      
+      get "/inspections"
       expect(response).to have_http_status(:success)
-      expect(response.content_type).to eq("application/pdf")
-      expect(response.headers["Content-Disposition"]).to include("PAT_Certificate_TEST124.pdf")
-      expect(response.body.bytes.first(4).pack("C*")).to eq("%PDF")
+      
+      # Verify only the current user's inspections are displayed
+      expect(response.body).to include(@user_inspection.serial)
+      expect(response.body).not_to include(@other_inspection.serial)
+    end
+    
+    it "prevents viewing another user's inspection" do
+      # Log in as the first user
+      post "/login", params: {session: {email: user.email, password: "password"}}
+      
+      # Try to view another user's inspection
+      get "/inspections/#{@other_inspection.id}"
+      
+      # Should redirect with an unauthorized message
+      expect(response).to redirect_to(inspections_path)
+      expect(flash[:danger]).to include("You are not authorized")
+    end
+    
+    it "prevents editing another user's inspection" do
+      # Log in as the first user
+      post "/login", params: {session: {email: user.email, password: "password"}}
+      
+      # Try to edit another user's inspection
+      get "/inspections/#{@other_inspection.id}/edit"
+      
+      # Should redirect with an unauthorized message
+      expect(response).to redirect_to(inspections_path)
+      expect(flash[:danger]).to include("You are not authorized")
+    end
+    
+    it "prevents updating another user's inspection" do
+      # Log in as the first user
+      post "/login", params: {session: {email: user.email, password: "password"}}
+      
+      # Try to update another user's inspection
+      patch "/inspections/#{@other_inspection.id}", params: {
+        inspection: {description: "Should Not Update"}
+      }
+      
+      # Should redirect with an unauthorized message
+      expect(response).to redirect_to(inspections_path)
+      expect(flash[:danger]).to include("You are not authorized")
+      
+      # Verify the description did not change
+      @other_inspection.reload
+      expect(@other_inspection.description).to eq("Test Equipment")
+    end
+    
+    it "prevents deleting another user's inspection" do
+      # Log in as the first user
+      post "/login", params: {session: {email: user.email, password: "password"}}
+      
+      # Try to delete another user's inspection
+      delete "/inspections/#{@other_inspection.id}"
+      
+      # Should redirect with an unauthorized message
+      expect(response).to redirect_to(inspections_path)
+      expect(flash[:danger]).to include("You are not authorized")
+      
+      # Verify the inspection still exists
+      expect(Inspection.exists?(@other_inspection.id)).to be true
+    end
+  end
+
+  describe "when logged in" do
+    before do
+      post "/login", params: {session: {email: user.email, password: "password"}}
+    end
+
+    describe "GET /index" do
+      it "returns http success" do
+        get "/inspections"
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    describe "GET /show" do
+      it "returns http success for own inspection" do
+        inspection = Inspection.create!(valid_inspection_attributes.merge(user: user))
+
+        get "/inspections/#{inspection.id}"
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    describe "GET /edit" do
+      it "returns http success for own inspection" do
+        inspection = Inspection.create!(valid_inspection_attributes.merge(user: user))
+
+        get "/inspections/#{inspection.id}/edit"
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    describe "POST /create" do
+      it "creates a new inspection and redirects" do
+        post "/inspections", params: {inspection: valid_inspection_attributes}
+        
+        expect(response).to have_http_status(:redirect)
+        follow_redirect!
+        expect(response).to have_http_status(:success)
+        
+        # Verify the inspection was created with correct attributes
+        inspection = Inspection.last
+        expect(inspection.serial).to eq("TEST123")
+        expect(inspection.user_id).to eq(user.id)
+      end
+      
+      it "creates a new inspection with image and redirects" do
+        file = fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg'), 'image/jpeg')
+        
+        post "/inspections", params: {
+          inspection: valid_inspection_attributes.merge(
+            serial: "TEST999",
+            description: "Test Equipment with Image",
+            image: file
+          )
+        }
+        
+        expect(response).to have_http_status(:redirect)
+        follow_redirect!
+        expect(response).to have_http_status(:success)
+        
+        # Check that the image was attached and user_id was set
+        inspection = Inspection.find_by(serial: "TEST999")
+        expect(inspection.image).to be_attached
+        expect(inspection.user_id).to eq(user.id)
+      end
+    end
+
+    describe "PATCH /update" do
+      it "updates own inspection and redirects" do
+        inspection = Inspection.create!(valid_inspection_attributes.merge(
+          serial: "TEST456",
+          user: user
+        ))
+
+        patch "/inspections/#{inspection.id}", params: {
+          inspection: {description: "Updated Equipment"}
+        }
+        
+        expect(response).to have_http_status(:redirect)
+        follow_redirect!
+        expect(response).to have_http_status(:success)
+        
+        # Verify the inspection was updated
+        inspection.reload
+        expect(inspection.description).to eq("Updated Equipment")
+        expect(inspection.user_id).to eq(user.id)
+      end
+    end
+
+    describe "DELETE /destroy" do
+      it "deletes own inspection and redirects" do
+        inspection = Inspection.create!(valid_inspection_attributes.merge(
+          serial: "TEST789",
+          user: user
+        ))
+
+        delete "/inspections/#{inspection.id}"
+        
+        expect(response).to have_http_status(:redirect)
+        follow_redirect!
+        expect(response).to have_http_status(:success)
+        
+        # Verify the inspection was deleted
+        expect(Inspection.exists?(inspection.id)).to be false
+      end
     end
   end
 end

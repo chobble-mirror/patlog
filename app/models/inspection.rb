@@ -1,4 +1,5 @@
 class Inspection < ApplicationRecord
+  belongs_to :user
   has_one_attached :image
 
   validates :inspector, :serial, :description, :location, presence: true

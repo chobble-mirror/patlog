@@ -55,15 +55,18 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_27_190131) do
     t.boolean "passed"
     t.text "comments"
     t.string "image_path"
+    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["serial"], name: "index_inspections_on_serial"
+    t.index ["user_id"], name: "index_inspections_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "password_digest"
     t.string "name"
+    t.boolean "admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email"
@@ -71,4 +74,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_27_190131) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "inspections", "users"
 end
