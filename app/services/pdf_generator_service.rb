@@ -37,8 +37,9 @@ class PdfGeneratorService
 
     pdf.bounding_box([0, pdf.cursor], width: pdf.bounds.width, height: 50) do
       pdf.stroke_bounds
-      pdf.move_down 15
+      pdf.move_down 5
       pdf.text "Serial Number: #{inspection.serial}", align: :center, size: 14
+      pdf.move_down 2
       pdf.text (inspection.passed ? "PASSED" : "FAILED").to_s, align: :center, size: 14,
         style: :bold, color: inspection.passed ? "009900" : "CC0000"
     end
