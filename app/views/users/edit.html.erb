@@ -32,6 +32,13 @@
     <%= form.password_field :password_confirmation %>
   </div>
 
+  <% if current_user.admin? %>
+  <div class="field">
+    <%= form.label :inspection_limit %>
+    <%= form.number_field :inspection_limit, min: 0 %>
+  </div>
+  <% end %>
+
   <div class="actions">
     <%= form.submit "Update User" %>
   </div>

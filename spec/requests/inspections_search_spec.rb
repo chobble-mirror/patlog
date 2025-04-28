@@ -3,10 +3,10 @@ require "rails_helper"
 RSpec.describe "Inspections Search", type: :request do
   let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
   
-  # Mock user login for all inspection tests since they require login
+  # Create a user and create a session
   before do
-    allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_return(true)
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
+    user # create the user
+    post "/login", params: { session: { email: "test@example.com", password: "password" } }
   end
   
   describe "GET /inspections/search with esoteric test cases" do

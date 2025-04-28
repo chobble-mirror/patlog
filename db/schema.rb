@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_27_190131) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_28_152026) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -58,6 +58,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_27_190131) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "appliance_plug_check", default: false
+    t.integer "equipment_power"
+    t.boolean "load_test", default: false
+    t.decimal "rcd_trip_time", precision: 5, scale: 2
+    t.string "manufacturer"
     t.index ["serial"], name: "index_inspections_on_serial"
     t.index ["user_id"], name: "index_inspections_on_user_id"
   end
@@ -69,6 +74,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_27_190131) do
     t.boolean "admin", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "inspection_limit", default: 10, null: false
     t.index ["email"], name: "index_users_on_email"
   end
 

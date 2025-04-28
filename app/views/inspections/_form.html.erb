@@ -1,0 +1,140 @@
+<% if @inspection.errors.any? %>
+  <div class="error">
+    <h3>Did not save. Fix these <%= pluralize(@inspection.errors.count, "error") %> and try again:</h3>
+    <ul>
+    <% @inspection.errors.each do |error| %>
+      <li><%= error.full_message %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with(model: @inspection) do |form| %>
+  <div class="form-section">
+    <h3>Equipment Details</h3>
+
+    <div>
+      <%= form.label :serial, "Serial Number / Asset ID" %>
+      <%= form.text_field :serial %>
+    </div>
+
+    <div>
+      <%= form.label :manufacturer, "Manufacturer" %>
+      <%= form.text_field :manufacturer %>
+    </div>
+
+    <div>
+      <%= form.label :description, "Equipment Description" %>
+      <%= form.text_field :description %>
+    </div>
+
+    <div>
+      <%= form.label :location, "Location" %>
+      <%= form.text_field :location %>
+    </div>
+
+    <div>
+      <%= form.label :equipment_class, "Equipment Class" %>
+      <%= form.select :equipment_class, [['Class I (Earthed)', 1], ['Class II (Double Insulated)', 2]] %>
+    </div>
+
+    <div>
+      <%= form.label :equipment_power, "Equipment Power (Watts)" %>
+      <%= form.number_field :equipment_power, step: 1 %>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h3>Inspection Details</h3>
+
+    <div>
+      <%= form.label :inspection_date, "Inspection Date" %>
+      <%= form.date_field :inspection_date %>
+    </div>
+
+    <div>
+      <%= form.label :reinspection_date, "Reinspection Date" %>
+      <%= form.date_field :reinspection_date %>
+    </div>
+
+    <div>
+      <%= form.label :inspector, "Inspector Name" %>
+      <%= form.text_field :inspector %>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h3>Test Results</h3>
+
+    <div>
+      <%= form.label :visual_pass, "Visual Inspection" %>
+      <%= form.check_box :visual_pass %>
+      <span class="checkbox-label">Pass</span>
+    </div>
+
+    <div>
+      <%= form.label :appliance_plug_check, "Appliance Plug Check" %>
+      <%= form.check_box :appliance_plug_check %>
+      <span class="checkbox-label">Pass</span>
+    </div>
+
+    <div>
+      <%= form.label :fuse_rating, "Fuse Rating (A)" %>
+      <%= form.number_field :fuse_rating, step: 1 %>
+    </div>
+
+    <div>
+      <%= form.label :earth_ohms, "Earth Continuity (Ohms)" %>
+      <%= form.number_field :earth_ohms, step: 0.01 %>
+    </div>
+
+    <div>
+      <%= form.label :insulation_mohms, "Insulation Resistance (MOhms)" %>
+      <%= form.number_field :insulation_mohms, step: 1 %>
+    </div>
+
+    <div>
+      <%= form.label :leakage, "Leakage Current (mA)" %>
+      <%= form.number_field :leakage, step: 0.01 %>
+    </div>
+
+    <div>
+      <%= form.label :load_test, "Load/Operation Test" %>
+      <%= form.check_box :load_test %>
+      <span class="checkbox-label">Performed</span>
+    </div>
+
+    <div>
+      <%= form.label :rcd_trip_time, "RCD Trip Time (ms)" %>
+      <%= form.number_field :rcd_trip_time, step: 0.01 %>
+      <span class="help-text">Leave blank if not applicable</span>
+    </div>
+
+    <div>
+      <%= form.label :passed, "Overall Result" %>
+      <%= form.check_box :passed %>
+      <span class="checkbox-label">Pass</span>
+    </div>
+
+    <div>
+      <%= form.label :comments, "Comments" %>
+      <%= form.text_area :comments, rows: 3 %>
+    </div>
+
+    <div>
+      <%= form.label :image, "Equipment Image" %>
+      <%= form.file_field :image, accept: 'image/jpeg,image/png' %>
+      <span class="help-text">Upload a JPEG or PNG image (will be converted to JPEG)</span>
+      <% if @inspection.image.attached? %>
+        <div class="current-image">
+          <p>Current image:</p>
+          <%= image_tag url_for(@inspection.image.variant(resize_to_limit: [200, 200])) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <%= form.submit @inspection.new_record? ? "Save Inspection" : "Update Inspection" %>
+  </div>
+<% end %>

@@ -16,6 +16,10 @@
         <td><%= @inspection.serial %></td>
       </tr>
       <tr>
+        <th>Manufacturer:</th>
+        <td><%= @inspection.manufacturer %></td>
+      </tr>
+      <tr>
         <th>Description:</th>
         <td><%= @inspection.description %></td>
       </tr>
@@ -26,6 +30,10 @@
       <tr>
         <th>Equipment Class:</th>
         <td>Class <%= @inspection.equipment_class %> (<%= @inspection.equipment_class == 1 ? 'Earthed' : 'Double Insulated' %>)</td>
+      </tr>
+      <tr>
+        <th>Equipment Power:</th>
+        <td><%= @inspection.equipment_power.present? ? "#{@inspection.equipment_power} W" : "Not specified" %></td>
       </tr>
     </table>
   </div>
@@ -58,6 +66,12 @@
         </td>
       </tr>
       <tr>
+        <th>Appliance Plug Check:</th>
+        <td class="<%= @inspection.appliance_plug_check ? 'pass' : 'fail' %>">
+          <%= @inspection.appliance_plug_check ? 'PASS' : 'FAIL' %>
+        </td>
+      </tr>
+      <tr>
         <th>Fuse Rating:</th>
         <td><%= @inspection.fuse_rating %> A</td>
       </tr>
@@ -73,6 +87,16 @@
         <th>Leakage Current:</th>
         <td><%= @inspection.leakage %> mA</td>
       </tr>
+      <tr>
+        <th>Load/Operation Test:</th>
+        <td><%= @inspection.load_test ? 'Performed' : 'Not performed' %></td>
+      </tr>
+      <% if @inspection.rcd_trip_time.present? %>
+      <tr>
+        <th>RCD Trip Time:</th>
+        <td><%= @inspection.rcd_trip_time %> ms</td>
+      </tr>
+      <% end %>
       <tr>
         <th>Overall Result:</th>
         <td class="<%= @inspection.passed ? 'pass' : 'fail' %>">

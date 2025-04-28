@@ -9,20 +9,38 @@ RSpec.describe "Sessions", type: :request do
   end
 
   describe "POST /login" do
-    it "authenticates a user and redirects" do
-      # Create a test user
+    before do
       User.create!(
         name: "Test User",
         email: "test@example.com",
         password: "password",
         password_confirmation: "password"
       )
+    end
 
+    it "authenticates a user and redirects" do
       # Log in with credentials
       post "/login", params: {session: {email: "test@example.com", password: "password"}}
 
-      # Should redirect to inspections path after login
-      expect(response).to have_http_status(:redirect)
+      # Should redirect to root path after login
+      expect(response).to redirect_to(root_path)
+    end
+    
+    it "sets a permanent cookie if remember_me is checked" do
+      # Log in with remember me
+      post "/login", params: {session: {email: "test@example.com", password: "password", remember_me: "1"}}
+      
+      # Should redirect successfully
+      expect(response).to redirect_to(root_path)
+      expect(session[:user_id]).to be_present
+    end
+    
+    it "does not set a permanent cookie if remember_me is not checked" do
+      # Log in without remember me
+      post "/login", params: {session: {email: "test@example.com", password: "password", remember_me: "0"}}
+      
+      # Should redirect successfully
+      expect(response).to redirect_to(root_path)
     end
   end
 

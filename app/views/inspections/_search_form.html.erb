@@ -1,0 +1,6 @@
+<div class="search-box">
+  <%= form_with url: search_inspections_path, method: :get do |form| %>
+    <%= form.text_field :query, placeholder: "Search by Serial Number...", value: params[:query], class: "search-input" %>
+    <%= form.submit "Search", class: "search-button" %>
+  <% end %>
+</div>

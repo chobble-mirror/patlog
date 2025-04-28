@@ -39,10 +39,10 @@ RSpec.describe "Inspections", type: :request do
       expect(flash[:danger]).to include("Please log in")
     end
 
-    it "allows access to new inspection form when not logged in" do
+    it "redirects to login page when not logged in for new inspection" do
       get "/inspections/new"
-      expect(response).to have_http_status(:success)
-      expect(response).to render_template(:new)
+      expect(response).to redirect_to(login_path)
+      expect(flash[:danger]).to include("Please log in")
     end
 
     it "redirects to login page when not logged in for create" do

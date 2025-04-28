@@ -114,4 +114,74 @@ RSpec.describe User, type: :model do
       expect(second_user.admin?).to be false
     end
   end
+
+  describe "inspection_limit" do
+    it "defaults to 10" do
+      user = User.new(
+        name: "Test User",
+        email: "test@example.com",
+        password: "password",
+        password_confirmation: "password"
+      )
+      expect(user.inspection_limit).to eq(10)
+    end
+
+    it "validates that inspection_limit is a non-negative integer" do
+      user = User.new(
+        name: "Test User",
+        email: "test@example.com",
+        password: "password",
+        password_confirmation: "password",
+        inspection_limit: -1
+      )
+      expect(user).not_to be_valid
+      expect(user.errors[:inspection_limit]).to include("must be greater than or equal to 0")
+    end
+
+    describe "#can_create_inspection?" do
+      it "returns true when user has fewer inspections than their limit" do
+        user = User.create!(
+          name: "Test User",
+          email: "test@example.com",
+          password: "password",
+          password_confirmation: "password",
+          inspection_limit: 2
+        )
+        user.inspections.create!(
+          inspector: "John Doe", 
+          serial: "PAT-123", 
+          description: "Test Description", 
+          location: "Test Location",
+          earth_ohms: 1.0,
+          insulation_mohms: 1.0,
+          leakage: 1.0,
+          equipment_class: 1,
+          fuse_rating: 5
+        )
+        expect(user.can_create_inspection?).to be true
+      end
+
+      it "returns false when user has reached their inspection limit" do
+        user = User.create!(
+          name: "Test User",
+          email: "test@example.com",
+          password: "password",
+          password_confirmation: "password",
+          inspection_limit: 1
+        )
+        user.inspections.create!(
+          inspector: "John Doe", 
+          serial: "PAT-123", 
+          description: "Test Description", 
+          location: "Test Location",
+          earth_ohms: 1.0,
+          insulation_mohms: 1.0,
+          leakage: 1.0,
+          equipment_class: 1,
+          fuse_rating: 5
+        )
+        expect(user.can_create_inspection?).to be false
+      end
+    end
+  end
 end

@@ -52,8 +52,10 @@ class PdfGeneratorService
 
     data = [
       ["Description", inspection.description],
+      ["Manufacturer", inspection.manufacturer.presence || "Not specified"],
       ["Location", inspection.location],
-      ["Equipment Class", "Class #{inspection.equipment_class} #{(inspection.equipment_class == 1) ? "(Earthed)" : "(Double Insulated)"}"]
+      ["Equipment Class", "Class #{inspection.equipment_class} #{(inspection.equipment_class == 1) ? "(Earthed)" : "(Double Insulated)"}"],
+      ["Equipment Power", inspection.equipment_power.present? ? "#{inspection.equipment_power} W" : "Not specified"]
     ]
 
     create_pdf_table(pdf, data)
@@ -70,15 +72,24 @@ class PdfGeneratorService
       ["Re-inspection Due", inspection.reinspection_date&.strftime("%d/%m/%Y")],
       ["Inspector", inspection.inspector],
       ["Visual Inspection", inspection.visual_pass ? "PASS" : "FAIL"],
+      ["Appliance Plug Check", inspection.appliance_plug_check ? "PASS" : "FAIL"],
       ["Fuse Rating", "#{inspection.fuse_rating}A"],
       ["Earth Continuity", "#{inspection.earth_ohms} Ohms"],
       ["Insulation Resistance", "#{inspection.insulation_mohms} MOhms"],
       ["Leakage Current", "#{inspection.leakage} mA"],
-      ["Overall Result", inspection.passed ? "PASS" : "FAIL"]
+      ["Load/Operation Test", inspection.load_test ? "Performed" : "Not performed"]
     ]
-
+    
+    # Add RCD trip time if present
+    if inspection.rcd_trip_time.present?
+      results << ["RCD Trip Time", "#{inspection.rcd_trip_time} ms"]
+    end
+    
+    # Add overall result as the last row
+    results << ["Overall Result", inspection.passed ? "PASS" : "FAIL"]
+    
     create_pdf_table(pdf, results) do |table|
-      table.row(8).background_color = inspection.passed ? "CCFFCC" : "FFCCCC"
+      table.row(results.length - 1).background_color = inspection.passed ? "CCFFCC" : "FFCCCC"
     end
   end
 

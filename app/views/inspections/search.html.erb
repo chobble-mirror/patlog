@@ -1,17 +1,14 @@
 <h2>Search Results</h2>
 
-<div class="search-box">
-  <%= form_with url: search_inspections_path, method: :get do |form| %>
-    <%= form.text_field :query, placeholder: "Search by Serial Number...", value: params[:query] %>
-    <%= form.submit "Search" %>
-  <% end %>
-</div>
+<%= render 'inspection_stats' %>
+
+<%= render 'search_form' %>
 
 <div class="search-results">
   <% if params[:query].present? %>
     <h3>Results for "<%= params[:query] %>"</h3>
   <% end %>
-  
+
   <% if @inspections.any? %>
     <table class="inspections-table">
       <thead>
@@ -53,5 +50,7 @@
 
 <div class="actions-container">
   <%= link_to "Back to All Inspections", inspections_path, class: 'button back' %>
-  <%= link_to "New Inspection", new_inspection_path, class: 'button new' %>
+  <% if current_user.can_create_inspection? %>
+    <%= link_to "New Inspection", new_inspection_path, class: 'button new' %>
+  <% end %>
 </div>

@@ -10,12 +10,22 @@ class InspectionsController < ApplicationController
   end
 
   def new
+    unless current_user.can_create_inspection?
+      flash[:danger] = "You have reached your inspection limit of #{current_user.inspection_limit}. Please contact an administrator."
+      redirect_to inspections_path and return
+    end
+    
     @inspection = Inspection.new
     @inspection.inspection_date = Date.today
     @inspection.reinspection_date = Date.today + 1.year
   end
 
   def create
+    unless current_user.can_create_inspection?
+      flash[:danger] = "You have reached your inspection limit of #{current_user.inspection_limit}. Please contact an administrator."
+      redirect_to inspections_path and return
+    end
+    
     @inspection = current_user.inspections.build(inspection_params)
     process_attached_image(@inspection.image) if @inspection.image.attached?
 
@@ -68,7 +78,8 @@ class InspectionsController < ApplicationController
       :inspection_date, :reinspection_date, :inspector, :serial,
       :description, :location, :equipment_class, :visual_pass,
       :fuse_rating, :earth_ohms, :insulation_mohms, :leakage,
-      :passed, :comments, :image
+      :passed, :comments, :image, :appliance_plug_check, :equipment_power,
+      :load_test, :rcd_trip_time, :manufacturer
     )
   end
 
