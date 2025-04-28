@@ -9,6 +9,7 @@ class PdfGeneratorService
       generate_pdf_test_results(pdf, inspection)
       generate_pdf_comments(pdf, inspection) if inspection.comments.present?
       generate_pdf_image(pdf, inspection) if inspection.image.attached?
+      generate_pdf_qr_code(pdf, inspection)
       generate_pdf_footer(pdf)
     end
   end
@@ -116,6 +117,32 @@ class PdfGeneratorService
     end
   end
 
+  def self.generate_pdf_qr_code(pdf, inspection)
+    pdf.move_down 20
+    pdf.text "Certificate Verification", size: 14, style: :bold
+    pdf.stroke_horizontal_rule
+    pdf.move_down 10
+    
+    # Generate QR code
+    qr_code_png = QrCodeService.generate_qr_code(inspection)
+    qr_code_temp_file = Tempfile.new(['qr_code', '.png'])
+    
+    begin
+      qr_code_temp_file.binmode
+      qr_code_temp_file.write(qr_code_png)
+      qr_code_temp_file.close
+      
+      # Add QR code image and URL text
+      pdf.image qr_code_temp_file.path, position: :center, width: 180
+      pdf.move_down 5
+      pdf.text "Scan to verify certificate or visit:", align: :center, size: 10
+      pdf.text "#{ENV['BASE_URL']}/c/#{inspection.id}", 
+        align: :center, size: 10, style: :italic
+    ensure
+      qr_code_temp_file.unlink
+    end
+  end
+  
   def self.generate_pdf_footer(pdf)
     pdf.move_down 30
     pdf.text "This certificate was generated on #{Time.now.strftime("%d/%m/%Y at %H:%M")}",

@@ -41,4 +41,10 @@ gem "importmap-rails", "~> 2.1"
 # Image processing
 gem "image_processing", "~> 1.12"
 
+# QR code generation
+gem "rqrcode"
+
+# Environment variables
+gem "dotenv-rails"
+
 gem "rails-controller-testing", "~> 1.0", groups: [:development, :test]

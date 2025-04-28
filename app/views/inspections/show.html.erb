@@ -142,8 +142,17 @@
   <% end %>
 </article>
 
+<section>
+  <h4>Certificate QR Code</h4>
+  <figure>
+    <%= image_tag qr_code_inspection_path(@inspection), alt: "QR Code for Certificate", width: 250 %>
+    <figcaption>Scan to view certificate</figcaption>
+  </figure>
+  <p><small>URL: <%= ENV['BASE_URL'] %>/c/<%= @inspection.id %></small></p>
+</section>
+
 <footer>
-  <%= link_to certificate_inspection_path(@inspection), target: '_blank' do %><strong>Generate Certificate</strong><% end %>
+  <%= link_to short_certificate_path(@inspection), target: '_blank' do %><strong>Generate Certificate</strong><% end %>
   <%= link_to edit_inspection_path(@inspection) do %><strong>Edit</strong><% end %>
   <%= link_to inspections_path do %><em>Back to List</em><% end %>
   <%= button_to "Delete", inspection_path(@inspection), method: :delete, data: { confirm: 'Are you sure you want to delete this inspection?' } %>

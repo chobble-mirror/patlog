@@ -1,24 +1,47 @@
-# README
+# PAT Inspection Logger
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A Ruby on Rails application for managing Portable Appliance Testing (PAT) inspections and generating certificates with QR codes for verification.
 
-Things you may want to cover:
+## Requirements
 
-* Ruby version
+* Ruby 3.2+
+* Rails 7.2+
+* SQLite 3
 
-* System dependencies
+## Setup
 
-* Configuration
+1. Clone the repository
+2. Install dependencies:
+   ```
+   bundle install
+   ```
+3. Create the database:
+   ```
+   rails db:create db:migrate
+   ```
+4. Configure environment variables:
+   ```
+   cp .env.example .env
+   ```
+   Then edit `.env` and set your application's base URL (e.g., `https://yourdomain.com` or `http://localhost:3000` for development).
 
-* Database creation
+5. Start the Rails server:
+   ```
+   rails server
+   ```
 
-* Database initialization
+## Features
 
-* How to run the test suite
+* PAT inspection records management
+* PDF certificate generation
+* QR code generation for certificate verification
+* User authentication and authorization
+* Search functionality for inspections
+* Image attachment for equipment photos
 
-* Services (job queues, cache servers, search engines, etc.)
+## Testing
 
-* Deployment instructions
-
-* ...
+Run the test suite with:
+```
+rspec
+```

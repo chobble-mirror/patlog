@@ -1,6 +1,6 @@
 class InspectionsController < ApplicationController
-  before_action :set_inspection, only: [:show, :edit, :update, :destroy, :certificate]
-  before_action :check_inspection_owner, only: [:show, :edit, :update, :destroy, :certificate]
+  before_action :set_inspection, only: [:show, :edit, :update, :destroy, :certificate, :qr_code]
+  before_action :check_inspection_owner, only: [:show, :edit, :update, :destroy, :certificate, :qr_code]
 
   def index
     @inspections = current_user.inspections.order(created_at: :desc)
@@ -68,6 +68,15 @@ class InspectionsController < ApplicationController
     send_data pdf_data.render,
       filename: "PAT_Certificate_#{@inspection.serial}.pdf",
       type: "application/pdf",
+      disposition: "inline"
+  end
+  
+  def qr_code
+    qr_code_png = QrCodeService.generate_qr_code(@inspection)
+    
+    send_data qr_code_png,
+      filename: "PAT_Certificate_QR_#{@inspection.serial}.png",
+      type: "image/png",
       disposition: "inline"
   end
 

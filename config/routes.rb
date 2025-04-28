@@ -22,6 +22,10 @@ Rails.application.routes.draw do
     end
     member do
       get "certificate"
+      get "qr_code"
     end
   end
+  
+  # Short URL for certificates
+  get "c/:id", to: "inspections#certificate", as: "short_certificate"
 end
