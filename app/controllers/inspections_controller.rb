@@ -4,6 +4,11 @@ class InspectionsController < ApplicationController
 
   def index
     @inspections = current_user.inspections.order(created_at: :desc)
+    
+    respond_to do |format|
+      format.html
+      format.csv { send_data inspections_to_csv, filename: "inspections-#{Date.today}.csv" }
+    end
   end
 
   def show
@@ -52,6 +57,10 @@ class InspectionsController < ApplicationController
   end
 
   def destroy
+    unless current_user.admin?
+      flash[:danger] = "Only administrators can delete inspection records"
+      redirect_to inspection_path(@inspection) and return
+    end
     @inspection.destroy
     flash_and_redirect("deleted")
   end
@@ -149,6 +158,31 @@ class InspectionsController < ApplicationController
   def flash_and_redirect(action)
     flash[:success] = "Inspection record #{action} successfully!"
     redirect_to (action == "deleted") ? inspections_path : @inspection
+  end
+  
+  def inspections_to_csv
+    attributes = %w[id serial inspection_date reinspection_date inspector description location equipment_class 
+                   visual_pass fuse_rating earth_ohms insulation_mohms leakage passed comments 
+                   appliance_plug_check equipment_power load_test rcd_trip_time manufacturer]
+    
+    CSV.generate(headers: true) do |csv|
+      headers = attributes + ["image_url"]
+      csv << headers
+      
+      current_user.inspections.order(created_at: :desc).each do |inspection|
+        row = attributes.map { |attr| inspection.send(attr) }
+        
+        # Add image URL if image exists
+        if inspection.image.attached?
+          image_url = "#{ENV['BASE_URL']}/rails/active_storage/blobs/redirect/#{inspection.image.blob.signed_id}/#{inspection.image.blob.filename}"
+          row << image_url
+        else
+          row << nil
+        end
+        
+        csv << row
+      end
+    end
   end
 
 end

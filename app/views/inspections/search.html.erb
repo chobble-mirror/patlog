@@ -1,11 +1,8 @@
 <header>
-  <h2>Search Results</h2>
   <% if params[:query].present? %>
     <h3>Results for "<%= params[:query] %>"</h3>
   <% end %>
 </header>
-
-<%= render 'inspection_stats' %>
 
 <section>
   <%= render 'search_form' %>
@@ -13,49 +10,8 @@
 
 <article>
   <% if @inspections.any? %>
-    <table>
-      <thead>
-        <tr>
-          <th>Serial/Asset</th>
-          <th>Description</th>
-          <th>Location</th>
-          <th>Last Inspection</th>
-          <th>Next Due</th>
-          <th>Result</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @inspections.each do |inspection| %>
-          <tr>
-            <td><%= inspection.serial %></td>
-            <td><%= inspection.description %></td>
-            <td><%= inspection.location %></td>
-            <td><%= inspection.inspection_date&.strftime('%d/%m/%Y') %></td>
-            <td><%= inspection.reinspection_date&.strftime('%d/%m/%Y') %></td>
-            <td>
-              <% if inspection.passed %>
-                <mark>PASS</mark>
-              <% else %>
-                <mark style="background-color:#f2dede;color:#a94442;">FAIL</mark>
-              <% end %>
-            </td>
-            <td>
-              <%= link_to inspection_path(inspection) do %><strong>View</strong><% end %> 
-              <%= link_to edit_inspection_path(inspection) do %><em>Edit</em><% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <%= render 'inspections_table', inspections: @inspections %>
   <% else %>
-    <p>No matching inspection records found.</p>
+    <p>No results found matching that search term.</p>
   <% end %>
 </article>
-
-<footer>
-  <%= link_to inspections_path do %><em>Back to All Inspections</em><% end %>
-  <% if current_user.can_create_inspection? %>
-    <%= link_to new_inspection_path do %><strong>New Inspection</strong><% end %>
-  <% end %>
-</footer>

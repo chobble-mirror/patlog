@@ -4,60 +4,14 @@
 
 <article>
   <% if @inspections.any? %>
-    <table>
-      <thead>
-        <tr>
-          <th>Image</th>
-          <th>Serial/Asset</th>
-          <th>Description</th>
-          <th>Location</th>
-          <th>Last Inspection</th>
-          <th>Next Due</th>
-          <th>Result</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @inspections.each do |inspection| %>
-          <tr>
-            <td>
-              <% if inspection.image.attached? %>
-                <%= link_to inspection_path(inspection) do %>
-                  <%= image_tag url_for(inspection.image.variant(resize_to_limit: [64, 64])) %>
-                <% end %>
-              <% else %>
-                <small>No image</small>
-              <% end %>
-            </td>
-            <td><%= inspection.serial %></td>
-            <td><%= inspection.description %></td>
-            <td><%= inspection.location %></td>
-            <td><%= inspection.inspection_date&.strftime('%d/%m/%Y') %></td>
-            <td><%= inspection.reinspection_date&.strftime('%d/%m/%Y') %></td>
-            <td>
-              <% if inspection.passed %>
-                <mark>PASS</mark>
-              <% else %>
-                <mark style="background-color:#f2dede;color:#a94442;">FAIL</mark>
-              <% end %>
-            </td>
-            <td>
-              <%= link_to inspection_path(inspection) do %><strong>View</strong><% end %>
-              <%= link_to edit_inspection_path(inspection) do %><em>Edit</em><% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <%= render 'inspections_table', inspections: @inspections %>
+    <p>
+      <%= link_to inspections_path(format: :csv) do %>
+        <strong>Export CSV</strong>
+      <% end %>
+    </p>
+    <%= render 'inspection_stats' %>
   <% else %>
     <p>No inspection records found.</p>
   <% end %>
 </article>
-
-<footer>
-  <% if current_user.can_create_inspection? %>
-    <%= link_to new_inspection_path do %><strong>New Inspection</strong><% end %>
-  <% end %>
-</footer>
-
-<%= render 'inspection_stats' %>
