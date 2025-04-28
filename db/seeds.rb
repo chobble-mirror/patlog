@@ -1,4 +1,4 @@
-User.create!(
+user = User.create!(
   email: "admin@example.com",
   password: "password",
   password_confirmation: "password",
@@ -19,5 +19,6 @@ Inspection.create!(
   insulation_mohms: 200,
   leakage: 0.2,
   passed: true,
-  comments: "In good condition"
+  comments: "In good condition",
+  user: user
 )
