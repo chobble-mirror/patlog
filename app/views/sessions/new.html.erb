@@ -1,3 +1,10 @@
+<p>
+  <strong>patlog</strong> is a website for logging PAT tests
+</p>
+<p>
+  <strong>status:</strong> beta testing
+</p>
+
 <%= form_with(scope: :session, url: login_path) do |form| %>
   <%= form.label :email %>
   <%= form.email_field :email %>
@@ -10,5 +17,14 @@
     Remember Me
   <% end %>
 
-  <%= form.submit "Login" %>
+  <div style="
+    display: flex;
+    justify-content: space-between;
+  ">
+    <%= form.submit "Login" %>
+
+    <%= link_to signup_path do %>
+      <strong>Sign Up</strong>
+    <% end %>
+  </div>
 <% end %>

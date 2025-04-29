@@ -11,9 +11,9 @@
     <%= javascript_importmap_tags %>
   </head>
   <body>
-    <nav>
-      <ul>
-        <% if current_user %>
+    <% if current_user %>
+      <nav>
+        <ul>
           <li>
             <%= link_to new_inspection_path do %>
               <strong>New</strong>
@@ -34,21 +34,9 @@
           <li>
             <%= button_to "Logout", logout_path, method: :delete %>
           </li>
-        <% else %>
-          <li>
-            <%= link_to login_path  do %>
-              <strong>Log In</strong>
-            <% end %>
-          </li>
-          <li>
-            <%= link_to signup_path  do %>
-              <strong>Sign Up</strong>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
-    </nav>
-
+        </ul>
+      </nav>
+    <% end %>
     <main>
       <% flash.each do |type, message| %>
         <article><aside><%= message %></aside></article>
