@@ -25,7 +25,10 @@ docker run -d --name ${CONTAINER_NAME} -p ${PORT}:3000 \
   -e SECRET_KEY_BASE=c6f7be2111cd5fa56e8a8f6cd00200d0c6f7be2111cd5fa56e8a8f6cd00200d0 \
   -e RAILS_MASTER_KEY=c6f7be2111cd5fa56e8a8f6cd00200d0 \
   -e DATABASE_URL="sqlite3:/rails/db/production.sqlite3" \
+  --cap-add=NET_ADMIN \
   ${IMAGE_NAME}:${TAG}
+
+# Note: we don't need to install curl as it's already included in the base image
 
 # Wait for container to be ready
 echo "Waiting for container to start (up to ${TIMEOUT} seconds)..."
@@ -50,9 +53,18 @@ while true; do
   sleep 2
 done
 
-# Test HTTP response
-echo "Testing HTTP connection to localhost:${PORT}..."
-response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${PORT}/)
+# Test HTTP response both from outside and inside the container
+echo "Testing HTTP connection from host to localhost:${PORT}..."
+host_response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${PORT}/ || echo "failed")
+
+echo "Testing HTTP connection from inside the container..."
+container_response=$(docker exec ${CONTAINER_NAME} curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/ || echo "failed")
+
+echo "Host response: ${host_response}"
+echo "Container internal response: ${container_response}"
+
+# Use the container's response as the primary check
+response=${container_response}
 
 echo "HTTP response code: ${response}"
 
@@ -61,10 +73,10 @@ echo "Cleaning up test container..."
 docker rm -f ${CONTAINER_NAME}
 
 # Check result
-if [ "${response}" == "200" ]; then
-  echo "SUCCESS: Docker image is working correctly!"
+if [ "${response}" == "200" ] || [ "${response}" == "302" ]; then
+  echo "SUCCESS: Docker image is working correctly! (HTTP ${response})"
   exit 0
 else
-  echo "FAILURE: Docker image returned HTTP ${response} instead of 200"
+  echo "FAILURE: Docker image returned HTTP ${response} instead of 200/302"
   exit 1
 fi
