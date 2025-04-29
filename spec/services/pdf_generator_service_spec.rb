@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe PdfGeneratorService do
   describe ".generate_certificate" do
-    let(:user) { User.create!(name: "Test Inspector", email: "test@example.com", password: "password", password_confirmation: "password") }
+    let(:user) { User.create!(email: "test@example.com", password: "password", password_confirmation: "password") }
     let(:inspection) do
       Inspection.create!(
         serial: "TEST123",

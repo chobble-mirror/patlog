@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Inspections Search", type: :request do
-  let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
+  let(:user) { User.create!(email: "test@example.com", password: "password", password_confirmation: "password") }
   
   # Create a user and create a session
   before do

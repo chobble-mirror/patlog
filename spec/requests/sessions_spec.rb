@@ -11,7 +11,6 @@ RSpec.describe "Sessions", type: :request do
   describe "POST /login" do
     before do
       User.create!(
-        name: "Test User",
         email: "test@example.com",
         password: "password",
         password_confirmation: "password"

@@ -4,7 +4,6 @@ RSpec.describe User, type: :model do
   describe "validations" do
     it "is valid with valid attributes" do
       user = User.new(
-        name: "Test User",
         email: "test@example.com",
         password: "password",
         password_confirmation: "password"
@@ -12,21 +11,15 @@ RSpec.describe User, type: :model do
       expect(user).to be_valid
     end
 
-    it "requires a name" do
-      user = User.new(email: "test@example.com", password: "password", password_confirmation: "password")
-      expect(user).not_to be_valid
-      expect(user.errors[:name]).to include("can't be blank")
-    end
 
     it "requires an email" do
-      user = User.new(name: "Test User", password: "password", password_confirmation: "password")
+      user = User.new(password: "password", password_confirmation: "password")
       expect(user).not_to be_valid
       expect(user.errors[:email]).to include("can't be blank")
     end
 
     it "requires a valid email format" do
       user = User.new(
-        name: "Test User",
         email: "invalid-email",
         password: "password",
         password_confirmation: "password"
@@ -36,14 +29,13 @@ RSpec.describe User, type: :model do
     end
 
     it "requires a password" do
-      user = User.new(name: "Test User", email: "test@example.com")
+      user = User.new(email: "test@example.com")
       expect(user).not_to be_valid
       expect(user.errors[:password]).to include("can't be blank")
     end
 
     it "requires a password of at least 6 characters" do
       user = User.new(
-        name: "Test User",
         email: "test@example.com",
         password: "short",
         password_confirmation: "short"
@@ -55,7 +47,6 @@ RSpec.describe User, type: :model do
     it "requires a unique email" do
       # Create a user with a specific email
       User.create!(
-        name: "First User",
         email: "duplicate@example.com",
         password: "password",
         password_confirmation: "password"
@@ -63,7 +54,6 @@ RSpec.describe User, type: :model do
 
       # Try to create another user with the same email
       duplicate_user = User.new(
-        name: "Second User",
         email: "duplicate@example.com",
         password: "password",
         password_confirmation: "password"
@@ -93,7 +83,6 @@ RSpec.describe User, type: :model do
       
       # Create the first user
       first_user = User.create!(
-        name: "Admin User",
         email: "admin@example.com",
         password: "password",
         password_confirmation: "password"
@@ -101,7 +90,6 @@ RSpec.describe User, type: :model do
       
       # Create a second user
       second_user = User.create!(
-        name: "Regular User",
         email: "regular@example.com",
         password: "password",
         password_confirmation: "password"
@@ -118,7 +106,6 @@ RSpec.describe User, type: :model do
   describe "inspection_limit" do
     it "defaults to 10" do
       user = User.new(
-        name: "Test User",
         email: "test@example.com",
         password: "password",
         password_confirmation: "password"
@@ -128,7 +115,6 @@ RSpec.describe User, type: :model do
 
     it "validates that inspection_limit is a non-negative integer" do
       user = User.new(
-        name: "Test User",
         email: "test@example.com",
         password: "password",
         password_confirmation: "password",
@@ -141,7 +127,6 @@ RSpec.describe User, type: :model do
     describe "#can_create_inspection?" do
       it "returns true when user has fewer inspections than their limit" do
         user = User.create!(
-          name: "Test User",
           email: "test@example.com",
           password: "password",
           password_confirmation: "password",
@@ -163,7 +148,6 @@ RSpec.describe User, type: :model do
 
       it "returns false when user has reached their inspection limit" do
         user = User.create!(
-          name: "Test User",
           email: "test@example.com",
           password: "password",
           password_confirmation: "password",

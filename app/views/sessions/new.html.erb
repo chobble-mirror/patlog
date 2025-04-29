@@ -1,11 +1,25 @@
+<h1>patlog</h1>
 <p>
-  <strong>patlog</strong> is a website for logging PAT tests
+   A website for logging PAT tests / inspections
 </p>
-<p>
-  <strong>status:</strong> beta testing
-</p>
+<ul>
+  <li>
+    <strong>Status:</strong> Private testing
+  </li>
+  <li>
+    <strong>Want to test?</strong>
+    <a href="https://chobble.com/contact/">Contact me</a>
+  </li>
+  <li>
+    <strong>Source code:</strong>
+    <a href="https://git.chobble.com/choble/pat-logger">Here</a> (AGPLv3)
+  </li>
+</ul>
+
+<hr>
 
 <%= form_with(scope: :session, url: login_path) do |form| %>
+  <header><h2>Log in</h2></header>
   <%= form.label :email %>
   <%= form.email_field :email %>
 
@@ -21,10 +35,10 @@
     display: flex;
     justify-content: space-between;
   ">
-    <%= form.submit "Login" %>
+    <%= form.submit "Log in" %>
 
     <%= link_to signup_path do %>
-      <strong>Sign Up</strong>
+      <strong>Sign up</strong>
     <% end %>
   </div>
 <% end %>

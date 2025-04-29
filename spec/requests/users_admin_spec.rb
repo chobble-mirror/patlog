@@ -7,7 +7,6 @@ RSpec.describe "Admin User Management", type: :request do
     
     # Create admin user (first user)
     @admin = User.create!(
-      name: "Admin User",
       email: "admin@example.com",
       password: "password",
       password_confirmation: "password"
@@ -15,7 +14,6 @@ RSpec.describe "Admin User Management", type: :request do
     
     # Create regular user
     @regular_user = User.create!(
-      name: "Regular User",
       email: "regular@example.com",
       password: "password",
       password_confirmation: "password"

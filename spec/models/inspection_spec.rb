@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Inspection, type: :model do
-  let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
+  let(:user) { User.create!(email: "test@example.com", password: "password", password_confirmation: "password") }
   
   describe "validations" do
     it "validates presence of required fields" do

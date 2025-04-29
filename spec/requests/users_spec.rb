@@ -12,7 +12,6 @@ RSpec.describe "Users", type: :request do
     it "creates a user and redirects" do
       post "/signup", params: {
         user: {
-          name: "New User",
           email: "newuser@example.com",
           password: "password",
           password_confirmation: "password"

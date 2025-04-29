@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Inspections PDF Generation", type: :request do
-  let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
+  let(:user) { User.create!(email: "test@example.com", password: "password", password_confirmation: "password") }
   
   # Mock user login for all inspection tests since they require login
   before do

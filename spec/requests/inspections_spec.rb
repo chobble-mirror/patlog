@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Inspections", type: :request do
-  let(:user) { User.create!(name: "Test User", email: "test@example.com", password: "password", password_confirmation: "password") }
-  let(:other_user) { User.create!(name: "Other User", email: "other@example.com", password: "password", password_confirmation: "password") }
+  let(:user) { User.create!(email: "test@example.com", password: "password", password_confirmation: "password") }
+  let(:other_user) { User.create!(email: "other@example.com", password: "password", password_confirmation: "password") }
   
   let(:valid_inspection_attributes) do
     {

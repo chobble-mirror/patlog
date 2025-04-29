@@ -8,7 +8,7 @@
   --color-bg: #fff;
   --color-bg-secondary: #6c0c6c;
   --color-bg-secondary-faded: #6c0c6c;
-  --color-link: #118bee;
+  --color-link: #6c0c6c;
   --color-secondary: #920de9;
   --color-secondary-accent: #920de90b;
   --color-shadow: #f4f4f4;
@@ -289,7 +289,6 @@ sup {
 a {
   color: var(--color-link);
   display: inline-block;
-  font-weight: bold;
   text-decoration: underline;
 }
 
