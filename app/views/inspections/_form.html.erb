@@ -9,93 +9,96 @@
   </aside>
 <% end %>
 
-<%= form_with(model: @inspection) do |form| %>
-  <header>
-    <h3>Equipment Details</h3>
-  </header>
+<%= form_with(model: @inspection, html: {class: "inspection"}) do |form| %>
+  <fieldset>
+    <header>
+      <h3>Equipment Details</h3>
+    </header>
 
-  <%= form.label :serial, "Serial Number / Asset ID" %>
-  <%= form.text_field :serial %>
+    <%= form.label :serial, "Serial Number / Asset ID" %>
+    <%= form.text_field :serial %>
 
-  <%= form.label :manufacturer, "Manufacturer" %>
-  <%= form.text_field :manufacturer %>
+    <%= form.label :manufacturer, "Manufacturer" %>
+    <%= form.text_field :manufacturer %>
 
-  <%= form.label :description, "Equipment Description" %>
-  <%= form.text_field :description %>
+    <%= form.label :description, "Equipment Description" %>
+    <%= form.text_field :description %>
 
-  <%= form.label :location, "Location" %>
-  <%= form.text_field :location %>
+    <%= form.label :location, "Location" %>
+    <%= form.text_field :location %>
 
-  <%= form.label :equipment_class, "Equipment Class" %>
-  <%= form.select :equipment_class, [['Class I (Earthed)', 1], ['Class II (Double Insulated)', 2]] %>
+    <%= form.label :equipment_class, "Equipment Class" %>
+    <%= form.select :equipment_class, [['Class I (Earthed)', 1], ['Class II (Double Insulated)', 2]] %>
 
-  <%= form.label :equipment_power, "Equipment Power (Watts)" %>
-  <%= form.number_field :equipment_power, step: 1 %>
+    <%= form.label :equipment_power, "Equipment Power (Watts)" %>
+    <%= form.number_field :equipment_power, step: 1 %>
+  </fieldset>
+  <fieldset>
+    <header>
+      <h3>Inspection Details</h3>
+    </header>
 
-  <header>
-    <h3>Inspection Details</h3>
-  </header>
+    <%= form.label :inspection_date, "Inspection Date" %>
+    <%= form.date_field :inspection_date %>
 
-  <%= form.label :inspection_date, "Inspection Date" %>
-  <%= form.date_field :inspection_date %>
+    <%= form.label :reinspection_date, "Reinspection Date" %>
+    <%= form.date_field :reinspection_date %>
 
-  <%= form.label :reinspection_date, "Reinspection Date" %>
-  <%= form.date_field :reinspection_date %>
+    <%= form.label :inspector, "Inspector Name" %>
+    <%= form.text_field :inspector %>
+  </fieldset>
+  <fieldset>
+    <header>
+      <h3>Test Results</h3>
+    </header>
 
-  <%= form.label :inspector, "Inspector Name" %>
-  <%= form.text_field :inspector %>
+    <%= form.label :visual_pass, "Visual Inspection" %>
+    <%= form.check_box :visual_pass %>
+    <label for="inspection_visual_pass">Pass</label>
 
-  <header>
-    <h3>Test Results</h3>
-  </header>
+    <%= form.label :appliance_plug_check, "Appliance Plug Check" %>
+    <%= form.check_box :appliance_plug_check %>
+    <label for="inspection_appliance_plug_check">Pass</label>
 
-  <%= form.label :visual_pass, "Visual Inspection" %>
-  <%= form.check_box :visual_pass %>
-  <label for="inspection_visual_pass">Pass</label>
+    <%= form.label :fuse_rating, "Fuse Rating (A)" %>
+    <%= form.number_field :fuse_rating, step: 1 %>
 
-  <%= form.label :appliance_plug_check, "Appliance Plug Check" %>
-  <%= form.check_box :appliance_plug_check %>
-  <label for="inspection_appliance_plug_check">Pass</label>
+    <%= form.label :earth_ohms, "Earth Continuity (Ohms)" %>
+    <%= form.number_field :earth_ohms, step: 0.01 %>
 
-  <%= form.label :fuse_rating, "Fuse Rating (A)" %>
-  <%= form.number_field :fuse_rating, step: 1 %>
+    <%= form.label :insulation_mohms, "Insulation Resistance (MOhms)" %>
+    <%= form.number_field :insulation_mohms, step: 1 %>
 
-  <%= form.label :earth_ohms, "Earth Continuity (Ohms)" %>
-  <%= form.number_field :earth_ohms, step: 0.01 %>
+    <%= form.label :leakage, "Leakage Current (mA)" %>
+    <%= form.number_field :leakage, step: 0.01 %>
 
-  <%= form.label :insulation_mohms, "Insulation Resistance (MOhms)" %>
-  <%= form.number_field :insulation_mohms, step: 1 %>
+    <%= form.label :load_test, "Load/Operation Test" %>
+    <%= form.check_box :load_test %>
+    <label for="inspection_load_test">Performed</label>
 
-  <%= form.label :leakage, "Leakage Current (mA)" %>
-  <%= form.number_field :leakage, step: 0.01 %>
+    <%= form.label :rcd_trip_time, "RCD Trip Time (ms)" %>
+    <%= form.number_field :rcd_trip_time, step: 0.01 %>
+    <small>Leave blank if not applicable</small>
 
-  <%= form.label :load_test, "Load/Operation Test" %>
-  <%= form.check_box :load_test %>
-  <label for="inspection_load_test">Performed</label>
+    <%= form.label :passed, "Overall Result" %>
+    <%= form.check_box :passed %>
+    <label for="inspection_passed">Pass</label>
 
-  <%= form.label :rcd_trip_time, "RCD Trip Time (ms)" %>
-  <%= form.number_field :rcd_trip_time, step: 0.01 %>
-  <small>Leave blank if not applicable</small>
+    <%= form.label :comments, "Comments" %>
+    <%= form.text_area :comments, rows: 3 %>
+  </fieldset>
+  <fieldset>
+    <header>
+      <h3>Image</h3>
+    </header>
+    <%= form.file_field :image, accept: 'image/jpeg,image/png' %>
+    <small>Upload a JPEG or PNG image (will be converted to JPEG)</small>
 
-  <%= form.label :passed, "Overall Result" %>
-  <%= form.check_box :passed %>
-  <label for="inspection_passed">Pass</label>
-
-  <%= form.label :comments, "Comments" %>
-  <%= form.text_area :comments, rows: 3 %>
-
-  <%= form.label :image, "Equipment Image" %>
-  <%= form.file_field :image, accept: 'image/jpeg,image/png' %>
-  <small>Upload a JPEG or PNG image (will be converted to JPEG)</small>
-
-  <% if @inspection.image.attached? %>
-    <figure>
+    <% if @inspection.image.attached? %>
       <%= image_tag url_for(@inspection.image.variant(resize_to_limit: [200, 200])) %>
-      <figcaption>Current image</figcaption>
-    </figure>
-  <% end %>
-
-  <p>
+    <% end %>
+  </fieldset>
+  <fieldset>
     <%= form.submit @inspection.new_record? ? "Save Inspection" : "Update Inspection" %>
-  </p>
+  </fieldset>
 <% end %>

@@ -35,8 +35,9 @@
       border-bottom-left-radius: 0;
     }
     input[type="text"] {
+      border-right: 0;
       border-top-right-radius: 0;
-      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
   }
 }
@@ -45,5 +46,24 @@
   text-align: center;
   table {
     margin: 1rem auto;
+  }
+}
+
+.login,
+.intro {
+  max-width: 30rem;
+  margin: 2rem auto;
+}
+
+.inspection {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  fieldset {
+    padding: 1.5rem;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
   }
 }

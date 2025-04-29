@@ -12,7 +12,7 @@
   --color-secondary: #920de9;
   --color-secondary-accent: #920de90b;
   --color-shadow: #f4f4f4;
-  --color-table: #118bee;
+  --color-table: #9d2c9d;
   --color-text: #000;
   --color-text-secondary: #999;
   --color-scrollbar: #cacae8;
@@ -62,9 +62,9 @@ html {
 article aside {
   background: var(--color-secondary-accent);
   border-left: 4px solid var(--color-secondary);
-  padding: 2rem 1rem;
+  padding: 1rem 2rem;
   width: fit-content;
-  margin: 0 auto;
+  margin: 2rem auto;
 }
 
 body {
@@ -236,6 +236,13 @@ h3,
 h4,
 h5,
 h6 {
+  font-family:
+    Menlo,
+    Consolas,
+    Monaco,
+    Liberation Mono,
+    Lucida Console,
+    monospace;
   line-height: var(--line-height);
   text-wrap: balance;
 }
@@ -395,7 +402,7 @@ main form {
 }
 
 form header {
-  margin: 1.5rem -1.5rem 1.5rem;
+  margin: -1.5rem -1.5rem 1.5rem;
   padding: 1.5rem 0;
   background: var(--color-bg-secondary);
   color: var(--color-bg);
