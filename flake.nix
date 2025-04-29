@@ -218,6 +218,7 @@
                     Type = "oneshot";
                     WorkingDirectory = "/run/patlog-${name}";
                     ExecStart = [
+                      "+${pkgs.ruby_3_4}/bin/bundle config set --local path 'vendor/bundle'"
                       "+${pkgs.ruby_3_4}/bin/bundle install"
                       "+${pkgs.ruby_3_4}/bin/bundle exec rails db:migrate"
                     ];
