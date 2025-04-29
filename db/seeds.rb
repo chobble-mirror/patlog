@@ -1,8 +1,7 @@
 user = User.create!(
   email: "admin@example.com",
   password: "password",
-  password_confirmation: "password",
-  name: "Admin User"
+  password_confirmation: "password"
 )
 
 Inspection.create!(
