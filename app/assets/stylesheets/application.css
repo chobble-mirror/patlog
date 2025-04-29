@@ -15,6 +15,7 @@
  */
 
 .search-form {
+  margin: 0 auto 2rem;
   form {
     padding: 0;
     box-shadow: 0;

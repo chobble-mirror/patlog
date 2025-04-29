@@ -1,7 +1,11 @@
 <% if current_user %>
-<article>
-  <aside>
-    <p>Usage: <strong><%= current_user.inspections.count %> / <%= current_user.inspection_limit %></strong></p>
-  </aside>
-</article>
+  <ul>
+    <li>
+      Logged in:
+      <strong><%= current_user.email %></strong>
+    </li>
+    <li>
+      Usage: <strong><%= current_user.inspections.count %> / <%= current_user.inspection_limit %></strong> inspections
+    </li>
+  </ul>
 <% end %>
