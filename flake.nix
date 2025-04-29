@@ -217,7 +217,10 @@
                   serviceConfig = makeBaseServiceConfig name // {
                     Type = "oneshot";
                     WorkingDirectory = "/run/patlog-${name}";
-                    ExecStart = "+${pkgs.ruby_3_4}/bin/bundle exec rails db:migrate";
+                    ExecStart = [
+                      "+${pkgs.ruby_3_4}/bin/bundle install"
+                      "+${pkgs.ruby_3_4}/bin/bundle exec rails db:migrate"
+                    ];
                   };
                 }
               ) cfg.instances)
