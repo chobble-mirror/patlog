@@ -532,11 +532,13 @@ table {
   border: 2px solid var(--color-bg-secondary);
   border-radius: var(--border-radius);
   border-spacing: 0;
-  display: inline-block;
+  display: table;
   max-width: 100%;
   overflow-x: auto;
   padding: 0;
   white-space: nowrap;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 table td,
