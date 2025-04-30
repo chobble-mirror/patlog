@@ -1,10 +1,11 @@
 class InspectionsController < ApplicationController
   before_action :set_inspection, only: [:show, :edit, :update, :destroy, :certificate, :qr_code]
-  before_action :check_inspection_owner, only: [:show, :edit, :update, :destroy, :certificate, :qr_code]
+  before_action :check_inspection_owner, only: [:show, :edit, :update, :destroy]
+  skip_before_action :require_login, only: [:certificate, :qr_code]
 
   def index
     @inspections = current_user.inspections.order(created_at: :desc)
-    
+
     respond_to do |format|
       format.html
       format.csv { send_data inspections_to_csv, filename: "inspections-#{Date.today}.csv" }
@@ -19,7 +20,7 @@ class InspectionsController < ApplicationController
       flash[:danger] = "You have reached your inspection limit of #{current_user.inspection_limit}. Please contact an administrator."
       redirect_to inspections_path and return
     end
-    
+
     @inspection = Inspection.new
     @inspection.inspection_date = Date.today
     @inspection.reinspection_date = Date.today + 1.year
@@ -30,7 +31,7 @@ class InspectionsController < ApplicationController
       flash[:danger] = "You have reached your inspection limit of #{current_user.inspection_limit}. Please contact an administrator."
       redirect_to inspections_path and return
     end
-    
+
     @inspection = current_user.inspections.build(inspection_params)
     process_attached_image(@inspection.image) if @inspection.image.attached?
 
@@ -79,10 +80,10 @@ class InspectionsController < ApplicationController
       type: "application/pdf",
       disposition: "inline"
   end
-  
+
   def qr_code
     qr_code_png = QrCodeService.generate_qr_code(@inspection)
-    
+
     send_data qr_code_png,
       filename: "PAT_Certificate_QR_#{@inspection.serial}.png",
       type: "image/png",
@@ -159,19 +160,19 @@ class InspectionsController < ApplicationController
     flash[:success] = "Inspection record #{action} successfully!"
     redirect_to (action == "deleted") ? inspections_path : @inspection
   end
-  
+
   def inspections_to_csv
-    attributes = %w[id serial inspection_date reinspection_date inspector description location equipment_class 
-                   visual_pass fuse_rating earth_ohms insulation_mohms leakage passed comments 
+    attributes = %w[id serial inspection_date reinspection_date inspector description location equipment_class
+                   visual_pass fuse_rating earth_ohms insulation_mohms leakage passed comments
                    appliance_plug_check equipment_power load_test rcd_trip_time manufacturer]
-    
+
     CSV.generate(headers: true) do |csv|
       headers = attributes + ["image_url"]
       csv << headers
-      
+
       current_user.inspections.order(created_at: :desc).each do |inspection|
         row = attributes.map { |attr| inspection.send(attr) }
-        
+
         # Add image URL if image exists
         if inspection.image.attached?
           image_url = "#{ENV['BASE_URL']}/rails/active_storage/blobs/redirect/#{inspection.image.blob.signed_id}/#{inspection.image.blob.filename}"
@@ -179,7 +180,7 @@ class InspectionsController < ApplicationController
         else
           row << nil
         end
-        
+
         csv << row
       end
     end
