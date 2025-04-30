@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get "service-worker" => "rails/pwa#service_worker", :as => :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", :as => :pwa_manifest
 
-  root "inspections#new"
+  root "home#index"
 
   get "signup", to: "users#new"
   post "signup", to: "users#create"
@@ -13,7 +13,12 @@ Rails.application.routes.draw do
   delete "logout", to: "sessions#destroy"
   
   # Users management (full CRUD)
-  resources :users
+  resources :users do
+    member do
+      get 'change_password'
+      patch 'update_password'
+    end
+  end
 
   # Inspections
   resources :inspections do

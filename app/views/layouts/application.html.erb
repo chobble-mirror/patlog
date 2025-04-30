@@ -32,6 +32,11 @@
             </li>
           <% end %>
           <li>
+            <%= link_to change_password_user_path(current_user) do %>
+              <strong>Change Password</strong>
+            <% end %>
+          </li>
+          <li>
             <%= button_to "Log Out", logout_path, method: :delete %>
           </li>
         </ul>
@@ -45,6 +50,15 @@
       <% end %>
 
       <%= yield %>
+
+      <footer>
+        <p>
+          <a href="https://git.chobble.com/chobble/patlog">Source Code</a>
+        </p>
+        <p>
+          Do you need a website, software development, or honest techy advice? Get in touch with me at <a href="https://chobble.com">Chobble.com</a>.
+        </p>
+      </footer>
     </main>
   </body>
 </html>
