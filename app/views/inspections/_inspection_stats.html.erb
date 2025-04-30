@@ -5,7 +5,11 @@
       <strong><%= current_user.email %></strong>
     </li>
     <li>
-      Usage: <strong><%= current_user.inspections.count %> / <%= current_user.inspection_limit %></strong> inspections
+      Usage: <strong><%= current_user.inspections.count %>
+      <% if current_user.inspection_limit > 0 %>
+        / <%= current_user.inspection_limit %></strong>
+      <% end %>
+      inspections
     </li>
   </ul>
 <% end %>

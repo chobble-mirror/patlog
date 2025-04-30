@@ -103,7 +103,7 @@ class InspectionsController < ApplicationController
   end
 
   def set_inspection
-    @inspection = Inspection.find_by(id: params[:id])
+    @inspection = Inspection.find_by(id: params[:id].downcase)
 
     unless @inspection
       flash[:danger] = "Inspection record not found"

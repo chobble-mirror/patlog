@@ -104,24 +104,52 @@ RSpec.describe User, type: :model do
   end
 
   describe "inspection_limit" do
-    it "defaults to 10" do
-      user = User.new(
+    it "defaults to 10 when LIMIT_INSPECTIONS is not set" do
+      # Ensure environment variable is not set
+      allow(ENV).to receive(:[]).with('LIMIT_INSPECTIONS').and_return(nil)
+      
+      user = User.create!(
         email: "test@example.com",
         password: "password",
         password_confirmation: "password"
       )
       expect(user.inspection_limit).to eq(10)
     end
+    
+    it "uses LIMIT_INSPECTIONS environment variable when set" do
+      # Mock the environment variable
+      allow(ENV).to receive(:[]).with('LIMIT_INSPECTIONS').and_return('20')
+      
+      user = User.create!(
+        email: "test@example.com",
+        password: "password",
+        password_confirmation: "password"
+      )
+      expect(user.inspection_limit).to eq(20)
+    end
+    
+    it "allows unlimited inspections when LIMIT_INSPECTIONS is -1" do
+      # Mock the environment variable
+      allow(ENV).to receive(:[]).with('LIMIT_INSPECTIONS').and_return('-1')
+      
+      user = User.create!(
+        email: "test@example.com",
+        password: "password",
+        password_confirmation: "password"
+      )
+      expect(user.inspection_limit).to eq(-1)
+      expect(user.can_create_inspection?).to be true
+    end
 
-    it "validates that inspection_limit is a non-negative integer" do
+    it "validates that inspection_limit is -1 or a non-negative integer" do
       user = User.new(
         email: "test@example.com",
         password: "password",
         password_confirmation: "password",
-        inspection_limit: -1
+        inspection_limit: -2
       )
       expect(user).not_to be_valid
-      expect(user.errors[:inspection_limit]).to include("must be greater than or equal to 0")
+      expect(user.errors[:inspection_limit]).to include("must be greater than or equal to -1")
     end
 
     describe "#can_create_inspection?" do
@@ -146,14 +174,21 @@ RSpec.describe User, type: :model do
         expect(user.can_create_inspection?).to be true
       end
 
-      it "returns false when user has reached their inspection limit" do
-        user = User.create!(
+      it "returns false when user has reached their inspection limit (for non-unlimited users)" do
+        allow_any_instance_of(User).to receive(:set_default_inspection_limit)
+        
+        # Create a user with a specific limit
+        user = User.new(
           email: "test@example.com",
           password: "password",
-          password_confirmation: "password",
-          inspection_limit: 1
+          password_confirmation: "password"
         )
-        user.inspections.create!(
+        # Manually set inspection limit to avoid callbacks
+        user.inspection_limit = 1
+        user.save!
+        
+        # Create an inspection to reach the limit
+        inspection = user.inspections.create!(
           inspector: "John Doe", 
           serial: "PAT-123", 
           description: "Test Description", 
@@ -164,7 +199,42 @@ RSpec.describe User, type: :model do
           equipment_class: 1,
           fuse_rating: 5
         )
+        
+        # Force reload the user to ensure counts are updated
+        user.reload
+        
+        # Check the state before testing can_create_inspection?
+        expect(user.inspection_limit).to eq(1)
+        expect(user.inspections.count).to eq(1)
+        
+        # Now test the method
         expect(user.can_create_inspection?).to be false
+      end
+      
+      it "returns true when user has unlimited inspections (-1)" do
+        user = User.create!(
+          email: "test@example.com",
+          password: "password",
+          password_confirmation: "password",
+          inspection_limit: -1
+        )
+        
+        # Create more than a typical limit to verify unlimited works
+        5.times do |i|
+          user.inspections.create!(
+            inspector: "John Doe", 
+            serial: "PAT-#{i}", 
+            description: "Test Description", 
+            location: "Test Location",
+            earth_ohms: 1.0,
+            insulation_mohms: 1.0,
+            leakage: 1.0,
+            equipment_class: 1,
+            fuse_rating: 5
+          )
+        end
+        
+        expect(user.can_create_inspection?).to be true
       end
     end
   end

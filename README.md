@@ -25,6 +25,10 @@ A Ruby on Rails application for managing Portable Appliance Testing (PAT) inspec
    ```
    Then edit `.env` and set your application's base URL (e.g., `https://yourdomain.com` or `http://localhost:3000` for development).
 
+   Available environment variables:
+   - `BASE_URL`: The base URL for your application (required)
+   - `LIMIT_INSPECTIONS`: Default number of inspections allowed per user (default: 10, set to -1 for unlimited)
+
 5. Start the Rails server:
    ```
    rails server

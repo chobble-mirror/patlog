@@ -4,17 +4,20 @@ class QrCodeService
 
     # Create QR code for the certificate URL using the shorter format
     url = "#{ENV['BASE_URL']}/c/#{inspection.id}"
-    
+
+    # Upper case characters take less QR code space (!?!)
+    url.upcase!
+
     # Create QR code with optimized options for chunkier appearance
     qrcode = RQRCode::QRCode.new(url, {
       # Use lower error correction level for fewer modules (chunkier code)
       # :l - 7% error correction (lowest, largest modules)
-      # :m - 15% error correction 
+      # :m - 15% error correction
       # :q - 25% error correction
       # :h - 30% error correction (highest, smallest modules)
-      level: :l
+      level: :m
     })
-    
+
     qrcode.as_png(
       bit_depth: 1,
       border_modules: 2,           # Less border space
