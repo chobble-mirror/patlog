@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   get "login", to: "sessions#new"
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
-  
+
   # Users management (full CRUD)
   resources :users do
     member do
@@ -30,7 +30,8 @@ Rails.application.routes.draw do
       get "qr_code"
     end
   end
-  
+
   # Short URL for certificates
   get "c/:id", to: "inspections#certificate", as: "short_certificate"
+  get "C/:id", to: "inspections#certificate", as: "short_certificate_uppercase"
 end
