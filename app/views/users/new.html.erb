@@ -1,4 +1,8 @@
 <%= form_with(model: @user, url: signup_path) do |form| %>
+  <header>
+    <h1>Register</h1>
+  </header>
+
   <% if @user.errors.any? %>
     <aside>
       <h3><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h3>

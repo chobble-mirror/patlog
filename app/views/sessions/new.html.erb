@@ -1,23 +1,3 @@
-<article class="intro">
-  <h1>patlog</h1>
-  <p>
-    A website for logging PAT tests / inspections
-  </p>
-  <ul>
-    <li>
-      <strong>Status:</strong> Private testing
-    </li>
-    <li>
-      <strong>Interested?</strong>
-      <a href="https://chobble.com/contact/">Contact me</a>
-    </li>
-    <li>
-      <strong>Source code:</strong>
-      <a href="https://git.chobble.com/chobble/patlog">Here</a> (AGPLv3)
-    </li>
-  </ul>
-</article>
-
 <div class="login">
   <%= form_with(scope: :session, url: login_path) do |form| %>
     <header><h2>Log in</h2></header>
@@ -37,10 +17,6 @@
       justify-content: space-between;
     ">
       <%= form.submit "Log in" %>
-
-      <%= link_to signup_path do %>
-        <strong>Sign up</strong>
-      <% end %>
     </div>
   <% end %>
 </div>

@@ -5,17 +5,34 @@
       Log your Portable Appliance Testing inspections, generate PDF certificates, and link to them with QR codes.
     </p>
     <p>
-      A free and open source app from <a href="https://chobble.com">Chobble.com</a>
+      A free and open source service from <a href="https://chobble.com">Chobble.com</a>
     </p>
   </header>
+
+  <% unless current_user %>
+    <nav>
+      <ul>
+        <li>
+          <%= link_to login_path do %>
+            <strong>Log In</strong>
+          <% end %>
+        </li>
+        <li>
+          <%= link_to new_user_path do %>
+            <strong>Register</strong>
+          <% end %>
+        </li>
+      </ul>
+    </nav>
+  <% end %>
   <section>
     <aside>
       <h2>Log PAT Inspections</h2>
       <p>Create and log your PAT test records with all the necessary fields.</p>
     </aside>
     <aside>
-      <h2>Generate Certificates</h2>
-      <p>PDF inspection certificates with QR codes for easy verification.</p>
+      <h2>Generate PDF Certificates</h2>
+      <p>Automatic certificates with QR codes links for easy verification.</p>
     </aside>
     <aside>
       <h2>Search & Export</h2>

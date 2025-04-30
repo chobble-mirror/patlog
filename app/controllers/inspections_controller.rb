@@ -58,10 +58,6 @@ class InspectionsController < ApplicationController
   end
 
   def destroy
-    unless current_user.admin?
-      flash[:danger] = "Only administrators can delete inspection records"
-      redirect_to inspection_path(@inspection) and return
-    end
     @inspection.destroy
     flash_and_redirect("deleted")
   end
@@ -157,7 +153,7 @@ class InspectionsController < ApplicationController
   end
 
   def flash_and_redirect(action)
-    flash[:success] = "Inspection record #{action} successfully!"
+    flash[:success] = "Inspection record #{action}"
     redirect_to (action == "deleted") ? inspections_path : @inspection
   end
 

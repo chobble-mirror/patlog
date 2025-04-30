@@ -69,8 +69,18 @@
 }
 
 footer {
+  max-width: 30rem;
+  margin: 6rem auto 2rem;
   text-align: center;
-  margin-top: 6rem;
   font-size: smaller;
   opacity: 0.7;
+
+  p {
+    text-wrap: balance;
+    text-wrap: pretty;
+  }
+}
+
+.center {
+  text-align: center;
 }

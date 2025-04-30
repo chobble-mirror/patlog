@@ -3,11 +3,11 @@ class UsersController < ApplicationController
   before_action :require_admin, only: [:index, :edit, :update, :destroy]
   before_action :set_user, only: [:edit, :update, :destroy, :change_password, :update_password]
   before_action :require_correct_user, only: [:change_password, :update_password]
-  
+
   def index
     @users = User.all
   end
-  
+
   def new
     @user = User.new
   end
@@ -16,28 +16,28 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       log_in @user
-      flash[:success] = "Account created successfully!"
+      flash[:success] = "Account created"
       redirect_to root_path
     else
       render :new, status: :unprocessable_entity
     end
   end
-  
+
   def edit
   end
-  
+
   def update
     if @user.update(user_params)
-      flash[:success] = "User updated successfully!"
+      flash[:success] = "User updated"
       redirect_to users_path
     else
       render :edit, status: :unprocessable_entity
     end
   end
-  
+
   def destroy
     @user.destroy
-    flash[:success] = "User deleted successfully!"
+    flash[:success] = "User deleted"
     redirect_to users_path
   end
 
@@ -47,7 +47,7 @@ class UsersController < ApplicationController
   def update_password
     if @user.authenticate(params[:user][:current_password])
       if @user.update(password_params)
-        flash[:success] = "Password updated successfully!"
+        flash[:success] = "Password updated"
         redirect_to root_path
       else
         render :change_password, status: :unprocessable_entity
@@ -59,7 +59,7 @@ class UsersController < ApplicationController
   end
 
   private
-  
+
   def set_user
     @user = User.find(params[:id])
   end
@@ -71,7 +71,7 @@ class UsersController < ApplicationController
       params.require(:user).permit(:email, :password, :password_confirmation)
     end
   end
-  
+
   def require_admin
     unless current_user&.admin?
       flash[:danger] = "You are not authorized to access this page"

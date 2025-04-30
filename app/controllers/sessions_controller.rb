@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
-  
+
   def new
   end
 
@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
       else
         cookies.delete(:user_id)
       end
-      flash[:success] = "Logged in successfully!"
+      flash[:success] = "Logged in"
       redirect_to root_path
     else
       flash.now[:danger] = "Invalid email/password combination"
@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
 
   def destroy
     log_out
-    flash[:success] = "Logged out successfully!"
+    flash[:success] = "Logged out"
     redirect_to root_path
   end
 end

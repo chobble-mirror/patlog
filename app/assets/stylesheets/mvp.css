@@ -89,8 +89,8 @@ hr {
   background-color: var(--color-bg-secondary);
   border: none;
   height: 1px;
-  margin: 4rem 0;
-  width: 100%;
+  margin: 4rem auto;
+  width: 60%;
 }
 
 section {
@@ -521,6 +521,7 @@ dialog::backdrop {
     opacity: 1;
     transform: translateY(0);
   }
+  text-align:;
 }
 
 dialog hr {

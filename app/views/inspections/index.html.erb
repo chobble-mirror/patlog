@@ -9,12 +9,13 @@
 <article>
   <% if @inspections.any? %>
     <%= render 'inspections_table', inspections: @inspections %>
-    <p>
-      <%= link_to inspections_path(format: :csv) do %>
-        <strong>Export CSV</strong>
-      <% end %>
-    </p>
-    <%= render 'inspection_stats' %>
+    <div class="center">
+      <p>
+        <%= link_to inspections_path(format: :csv) do %>
+          <strong>Export CSV</strong>
+        <% end %>
+      </p>
+    </div>
   <% else %>
     <p>No inspection records found.</p>
   <% end %>
