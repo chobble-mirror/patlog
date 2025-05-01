@@ -6,6 +6,8 @@ class UsersController < ApplicationController
 
   def index
     @users = User.includes(:inspections).all
+    @total_images = ActiveStorage::Attachment.where(record_type: "Inspection", name: "image").count
+    @orphaned_images = ActiveStorage::Blob.left_joins(:attachments).where(active_storage_attachments: {id: nil}).count
   end
 
   def new
@@ -78,12 +80,7 @@ class UsersController < ApplicationController
     end
   end
 
-  def require_admin
-    unless current_user&.admin?
-      flash[:danger] = "You are not authorized to access this page"
-      redirect_to root_path
-    end
-  end
+  # Using require_admin from ApplicationController
 
   def require_correct_user
     unless current_user == @user

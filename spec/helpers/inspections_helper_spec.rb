@@ -1,15 +1,15 @@
 require "rails_helper"
 
-# Specs in this file have access to a helper object that includes
-# the InspectionsHelper. For example:
-#
-# describe InspectionsHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
 RSpec.describe InspectionsHelper, type: :helper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "#format_inspection_count" do
+    it "formats the inspection count with limit if limit is positive" do
+      user = double("User", inspections: double("Inspections", count: 5), inspection_limit: 10)
+      expect(helper.format_inspection_count(user)).to eq("5 / 10 inspections")
+    end
+
+    it "formats the inspection count without limit if limit is zero" do
+      user = double("User", inspections: double("Inspections", count: 5), inspection_limit: 0)
+      expect(helper.format_inspection_count(user)).to eq("5 inspections")
+    end
+  end
 end

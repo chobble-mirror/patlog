@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+# Add cron job to clean up unattached ActiveStorage blobs daily at 2am
+echo "0 2 * * * cd /rails && /usr/local/bin/bundle exec rake storage:cleanup >> /rails/log/cron.log 2>&1" > /tmp/crontab
+crontab /tmp/crontab
+rm /tmp/crontab
+
+# Start cron service
+service cron start

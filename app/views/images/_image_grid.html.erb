@@ -1,0 +1,25 @@
+<div class="image-grid">
+  <% items.each do |item| %>
+    <% if item.is_a?(ActiveStorage::Attachment) %>
+      <% blob = item.blob %>
+      <% record_info = capture do %>
+        <p>Inspection: <%= link_to item.record_id, inspection_path(item.record_id) %></p>
+      <% end %>
+    <% else %>
+      <% blob = item %>
+      <% record_info = "" %>
+    <% end %>
+    
+    <div class="image-item">
+      <img src="<%= url_for(blob) %>" alt="Image ID: <%= blob.id %>" />
+      <div class="image-info">
+        <p>ID: <%= blob.id %></p>
+        <p>Filename: <%= blob.filename %></p>
+        <p>Content type: <%= blob.content_type %></p>
+        <p>Created: <%= blob.created_at.strftime("%Y-%m-%d %H:%M") %></p>
+        <p>Size: <%= number_to_human_size(blob.byte_size) %></p>
+        <%= record_info %>
+      </div>
+    </div>
+  <% end %>
+</div>

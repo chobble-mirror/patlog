@@ -1,2 +1,8 @@
-table.users {
+.users {
+	table {
+		margin-bottom: 3rem;
+	}
+	p {
+		text-align: center;
+	}
 }

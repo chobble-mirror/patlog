@@ -157,7 +157,7 @@ RSpec.describe "Inspections", type: :request do
 
       # Should redirect with an unauthorized message
       expect(response).to redirect_to(inspections_path)
-      expect(flash[:danger]).to include("You are not authorized")
+      expect(flash[:danger]).to include("Access denied")
     end
 
     it "prevents editing another user's inspection" do
@@ -169,7 +169,7 @@ RSpec.describe "Inspections", type: :request do
 
       # Should redirect with an unauthorized message
       expect(response).to redirect_to(inspections_path)
-      expect(flash[:danger]).to include("You are not authorized")
+      expect(flash[:danger]).to include("Access denied")
     end
 
     it "prevents updating another user's inspection" do
@@ -183,7 +183,7 @@ RSpec.describe "Inspections", type: :request do
 
       # Should redirect with an unauthorized message
       expect(response).to redirect_to(inspections_path)
-      expect(flash[:danger]).to include("You are not authorized")
+      expect(flash[:danger]).to include("Access denied")
 
       # Verify the description did not change
       @other_inspection.reload
@@ -199,7 +199,7 @@ RSpec.describe "Inspections", type: :request do
 
       # Should redirect with an unauthorized message
       expect(response).to redirect_to(inspections_path)
-      expect(flash[:danger]).to include("You are not authorized")
+      expect(flash[:danger]).to include("Access denied")
 
       # Verify the inspection still exists
       expect(Inspection.exists?(@other_inspection.id)).to be true

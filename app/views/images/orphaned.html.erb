@@ -1,0 +1,13 @@
+<article class="images">
+  <header><h1>Orphaned Images</h1></header>
+  
+  <p>Orphaned images: <%= @images.count %></p>
+  
+  <% if @images.any? %>
+    <%= render 'image_grid', items: @images %>
+  <% else %>
+    <p>No orphaned images found.</p>
+  <% end %>
+  
+  <p><%= link_to "Back to Users", users_path %></p>
+</article>

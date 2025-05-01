@@ -1,9 +1,6 @@
-<header>
-  <h1>Users</h1>
-</header>
-
-<article>
-  <table class="users">
+<article class="users">
+  <header><h1>Users</h1></header>
+  <table>
     <thead>
       <tr>
         <th>Email</th>
@@ -21,4 +18,6 @@
       <% end %>
     </tbody>
   </table>
+  <p>Total images: <%= link_to @total_images, images_all_path %></p>
+  <p>Orphaned images: <%= link_to @orphaned_images, images_orphaned_path %></p>
 </article>

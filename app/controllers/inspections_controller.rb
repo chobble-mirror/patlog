@@ -109,7 +109,7 @@ class InspectionsController < ApplicationController
 
   def check_inspection_owner
     unless @inspection.user_id == current_user.id
-      flash[:danger] = "You are not authorized to access this inspection record"
+      flash[:danger] = "Access denied"
       redirect_to inspections_path and return
     end
   end

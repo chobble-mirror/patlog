@@ -1,0 +1,13 @@
+<article class="images">
+  <header><h1>All Images</h1></header>
+  
+  <p>Total images: <%= @images.count %></p>
+  
+  <% if @images.any? %>
+    <%= render 'image_grid', items: @images %>
+  <% else %>
+    <p>No images found.</p>
+  <% end %>
+  
+  <p><%= link_to "Back to Users", users_path %></p>
+</article>
