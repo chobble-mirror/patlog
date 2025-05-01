@@ -1,4 +1,6 @@
-article.about {
-  text-wrap: balance;
-  text-wrap: pretty;
+@media (max-width: 789px) {
+  article.about {
+    text-wrap: balance;
+    text-wrap: pretty;
+  }
 }
