@@ -159,8 +159,8 @@ class InspectionsController < ApplicationController
 
   def inspections_to_csv
     attributes = %w[id serial inspection_date reinspection_date inspector description location equipment_class
-                   visual_pass fuse_rating earth_ohms insulation_mohms leakage passed comments
-                   appliance_plug_check equipment_power load_test rcd_trip_time manufacturer]
+      visual_pass fuse_rating earth_ohms insulation_mohms leakage passed comments
+      appliance_plug_check equipment_power load_test rcd_trip_time manufacturer]
 
     CSV.generate(headers: true) do |csv|
       headers = attributes + ["image_url"]
@@ -171,7 +171,7 @@ class InspectionsController < ApplicationController
 
         # Add image URL if image exists
         if inspection.image.attached?
-          image_url = "#{ENV['BASE_URL']}/rails/active_storage/blobs/redirect/#{inspection.image.blob.signed_id}/#{inspection.image.blob.filename}"
+          image_url = "#{ENV["BASE_URL"]}/rails/active_storage/blobs/redirect/#{inspection.image.blob.signed_id}/#{inspection.image.blob.filename}"
           row << image_url
         else
           row << nil
@@ -181,5 +181,4 @@ class InspectionsController < ApplicationController
       end
     end
   end
-
 end

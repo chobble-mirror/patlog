@@ -15,8 +15,8 @@ Rails.application.routes.draw do
   # Users management (full CRUD)
   resources :users do
     member do
-      get 'change_password'
-      patch 'update_password'
+      get "change_password"
+      patch "update_password"
     end
   end
 

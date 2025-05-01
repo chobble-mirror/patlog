@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   include SessionsHelper
-  
+
   before_action :require_login
 
   private

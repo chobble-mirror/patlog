@@ -28,11 +28,11 @@ class ChangeInspectionIdToString < ActiveRecord::Migration[7.2]
       t.decimal :rcd_trip_time, precision: 5, scale: 2
       t.string :manufacturer
     end
-    
+
     # Copy indexes
     add_index :new_inspections, :serial
     add_index :new_inspections, :user_id
-    
+
     # Generate random IDs and copy data
     execute <<-SQL
       INSERT INTO new_inspections 
@@ -63,16 +63,16 @@ class ChangeInspectionIdToString < ActiveRecord::Migration[7.2]
         manufacturer
       FROM inspections
     SQL
-    
+
     # Update active storage attachments
     add_column :active_storage_attachments, :new_record_id, :string
-    
+
     # Create a mapping table to match old IDs to new IDs
     create_table :id_mapping, id: false do |t|
       t.integer :old_id
       t.string :new_id
     end
-    
+
     execute <<-SQL
       INSERT INTO id_mapping
       SELECT i.id, ni.id
@@ -82,7 +82,7 @@ class ChangeInspectionIdToString < ActiveRecord::Migration[7.2]
         i.serial = ni.serial AND
         i.description = ni.description
     SQL
-    
+
     execute <<-SQL
       UPDATE active_storage_attachments
       SET new_record_id = (
@@ -91,18 +91,18 @@ class ChangeInspectionIdToString < ActiveRecord::Migration[7.2]
       )
       WHERE record_type = 'Inspection'
     SQL
-    
+
     # Replace the tables
     rename_table :inspections, :old_inspections
     rename_table :new_inspections, :inspections
-    
+
     # Update the foreign keys
     rename_column :active_storage_attachments, :record_id, :old_record_id
     rename_column :active_storage_attachments, :new_record_id, :record_id
-    
+
     # Add foreign key
     add_foreign_key :inspections, :users
-    
+
     # Clean up
     drop_table :old_inspections
     drop_table :id_mapping

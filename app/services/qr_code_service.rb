@@ -3,7 +3,7 @@ class QrCodeService
     require "rqrcode"
 
     # Create QR code for the certificate URL using the shorter format
-    url = "#{ENV['BASE_URL']}/c/#{inspection.id}"
+    url = "#{ENV["BASE_URL"]}/c/#{inspection.id}"
 
     # Upper case characters take less QR code space (!?!)
     url.upcase!

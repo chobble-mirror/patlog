@@ -81,15 +81,15 @@ class PdfGeneratorService
       ["Leakage Current", "#{inspection.leakage} mA"],
       ["Load/Operation Test", inspection.load_test ? "Performed" : "Not performed"]
     ]
-    
+
     # Add RCD trip time if present
     if inspection.rcd_trip_time.present?
       results << ["RCD Trip Time", "#{inspection.rcd_trip_time} ms"]
     end
-    
+
     # Add overall result as the last row
     results << ["Overall Result", inspection.passed ? "PASS" : "FAIL"]
-    
+
     create_pdf_table(pdf, results) do |table|
       table.row(results.length - 1).background_color = inspection.passed ? "CCFFCC" : "FFCCCC"
     end
@@ -122,27 +122,27 @@ class PdfGeneratorService
     pdf.text "Certificate Verification", size: 14, style: :bold
     pdf.stroke_horizontal_rule
     pdf.move_down 10
-    
+
     # Generate QR code
     qr_code_png = QrCodeService.generate_qr_code(inspection)
-    qr_code_temp_file = Tempfile.new(['qr_code', '.png'])
-    
+    qr_code_temp_file = Tempfile.new(["qr_code", ".png"])
+
     begin
       qr_code_temp_file.binmode
       qr_code_temp_file.write(qr_code_png)
       qr_code_temp_file.close
-      
+
       # Add QR code image and URL text
       pdf.image qr_code_temp_file.path, position: :center, width: 180
       pdf.move_down 5
       pdf.text "Scan to verify certificate or visit:", align: :center, size: 10
-      pdf.text "#{ENV['BASE_URL']}/c/#{inspection.id}", 
+      pdf.text "#{ENV["BASE_URL"]}/c/#{inspection.id}",
         align: :center, size: 10, style: :italic
     ensure
       qr_code_temp_file.unlink
     end
   end
-  
+
   def self.generate_pdf_footer(pdf)
     pdf.move_down 30
     pdf.text "This certificate was generated on #{Time.now.strftime("%d/%m/%Y at %H:%M")}",

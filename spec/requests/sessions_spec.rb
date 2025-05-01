@@ -24,20 +24,20 @@ RSpec.describe "Sessions", type: :request do
       # Should redirect to root path after login
       expect(response).to redirect_to(root_path)
     end
-    
+
     it "sets a permanent cookie if remember_me is checked" do
       # Log in with remember me
       post "/login", params: {session: {email: "test@example.com", password: "password", remember_me: "1"}}
-      
+
       # Should redirect successfully
       expect(response).to redirect_to(root_path)
       expect(session[:user_id]).to be_present
     end
-    
+
     it "does not set a permanent cookie if remember_me is not checked" do
       # Log in without remember me
       post "/login", params: {session: {email: "test@example.com", password: "password", remember_me: "0"}}
-      
+
       # Should redirect successfully
       expect(response).to redirect_to(root_path)
     end

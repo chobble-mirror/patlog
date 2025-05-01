@@ -11,7 +11,6 @@ RSpec.describe User, type: :model do
       expect(user).to be_valid
     end
 
-
     it "requires an email" do
       user = User.new(password: "password", password_confirmation: "password")
       expect(user).not_to be_valid
@@ -75,29 +74,29 @@ RSpec.describe User, type: :model do
       expect(user.options[:dependent]).to eq(:destroy)
     end
   end
-  
+
   describe "admin functionality" do
     it "sets the first user as admin" do
       # Make sure there are no users
       User.destroy_all
-      
+
       # Create the first user
       first_user = User.create!(
         email: "admin@example.com",
         password: "password",
         password_confirmation: "password"
       )
-      
+
       # Create a second user
       second_user = User.create!(
         email: "regular@example.com",
         password: "password",
         password_confirmation: "password"
       )
-      
+
       # Verify the first user is an admin
       expect(first_user.admin?).to be true
-      
+
       # Verify the second user is not an admin
       expect(second_user.admin?).to be false
     end
@@ -106,8 +105,8 @@ RSpec.describe User, type: :model do
   describe "inspection_limit" do
     it "defaults to 10 when LIMIT_INSPECTIONS is not set" do
       # Ensure environment variable is not set
-      allow(ENV).to receive(:[]).with('LIMIT_INSPECTIONS').and_return(nil)
-      
+      allow(ENV).to receive(:[]).with("LIMIT_INSPECTIONS").and_return(nil)
+
       user = User.create!(
         email: "test@example.com",
         password: "password",
@@ -115,11 +114,11 @@ RSpec.describe User, type: :model do
       )
       expect(user.inspection_limit).to eq(10)
     end
-    
+
     it "uses LIMIT_INSPECTIONS environment variable when set" do
       # Mock the environment variable
-      allow(ENV).to receive(:[]).with('LIMIT_INSPECTIONS').and_return('20')
-      
+      allow(ENV).to receive(:[]).with("LIMIT_INSPECTIONS").and_return("20")
+
       user = User.create!(
         email: "test@example.com",
         password: "password",
@@ -127,11 +126,11 @@ RSpec.describe User, type: :model do
       )
       expect(user.inspection_limit).to eq(20)
     end
-    
+
     it "allows unlimited inspections when LIMIT_INSPECTIONS is -1" do
       # Mock the environment variable
-      allow(ENV).to receive(:[]).with('LIMIT_INSPECTIONS').and_return('-1')
-      
+      allow(ENV).to receive(:[]).with("LIMIT_INSPECTIONS").and_return("-1")
+
       user = User.create!(
         email: "test@example.com",
         password: "password",
@@ -161,9 +160,9 @@ RSpec.describe User, type: :model do
           inspection_limit: 2
         )
         user.inspections.create!(
-          inspector: "John Doe", 
-          serial: "PAT-123", 
-          description: "Test Description", 
+          inspector: "John Doe",
+          serial: "PAT-123",
+          description: "Test Description",
           location: "Test Location",
           earth_ohms: 1.0,
           insulation_mohms: 1.0,
@@ -176,7 +175,7 @@ RSpec.describe User, type: :model do
 
       it "returns false when user has reached their inspection limit (for non-unlimited users)" do
         allow_any_instance_of(User).to receive(:set_default_inspection_limit)
-        
+
         # Create a user with a specific limit
         user = User.new(
           email: "test@example.com",
@@ -186,12 +185,12 @@ RSpec.describe User, type: :model do
         # Manually set inspection limit to avoid callbacks
         user.inspection_limit = 1
         user.save!
-        
+
         # Create an inspection to reach the limit
-        inspection = user.inspections.create!(
-          inspector: "John Doe", 
-          serial: "PAT-123", 
-          description: "Test Description", 
+        user.inspections.create!(
+          inspector: "John Doe",
+          serial: "PAT-123",
+          description: "Test Description",
           location: "Test Location",
           earth_ohms: 1.0,
           insulation_mohms: 1.0,
@@ -199,18 +198,18 @@ RSpec.describe User, type: :model do
           equipment_class: 1,
           fuse_rating: 5
         )
-        
+
         # Force reload the user to ensure counts are updated
         user.reload
-        
+
         # Check the state before testing can_create_inspection?
         expect(user.inspection_limit).to eq(1)
         expect(user.inspections.count).to eq(1)
-        
+
         # Now test the method
         expect(user.can_create_inspection?).to be false
       end
-      
+
       it "returns true when user has unlimited inspections (-1)" do
         user = User.create!(
           email: "test@example.com",
@@ -218,13 +217,13 @@ RSpec.describe User, type: :model do
           password_confirmation: "password",
           inspection_limit: -1
         )
-        
+
         # Create more than a typical limit to verify unlimited works
         5.times do |i|
           user.inspections.create!(
-            inspector: "John Doe", 
-            serial: "PAT-#{i}", 
-            description: "Test Description", 
+            inspector: "John Doe",
+            serial: "PAT-#{i}",
+            description: "Test Description",
             location: "Test Location",
             earth_ohms: 1.0,
             insulation_mohms: 1.0,
@@ -233,7 +232,7 @@ RSpec.describe User, type: :model do
             fuse_rating: 5
           )
         end
-        
+
         expect(user.can_create_inspection?).to be true
       end
     end

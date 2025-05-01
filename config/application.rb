@@ -15,7 +15,7 @@ require "action_view/railtie"
 require "rails/test_unit/railtie"
 
 # Load dotenv manually since it might not be loaded yet
-require 'dotenv/load'
+require "dotenv/load"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
