@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", :as => :pwa_manifest
 
   root "home#index"
+  get "about", to: "home#about"
 
   get "signup", to: "users#new"
   post "signup", to: "users#create"
