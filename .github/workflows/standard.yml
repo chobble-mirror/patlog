@@ -1,4 +1,4 @@
-name: Standard Ruby
+name: "Lint: Standard Ruby"
 
 on: [push]
 
@@ -9,5 +9,5 @@ jobs:
       checks: write
       contents: write
     steps:
-    - name: Standard Ruby
+    - name: Run Standard Ruby linter
       uses: standardrb/standard-ruby-action@v1
