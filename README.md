@@ -2,6 +2,8 @@
 
 A Ruby on Rails application for managing Portable Appliance Testing (PAT) inspections and generating certificates with QR codes for verification.
 
+**[patlog.co.uk](https://patlog.co.uk)**
+
 ## Requirements
 
 * Ruby 3.2+
