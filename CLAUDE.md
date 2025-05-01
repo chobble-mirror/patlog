@@ -3,15 +3,16 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build/Lint/Test Commands
+
 - Run server: `rails s` or `bundle exec rails server`
-- Rails console: `rails c` 
-- Lint check: `bundle exec rake standard:check`
+- Rails console: `rails c`
 - Lint autofix: `bundle exec rake standard:fix`
 - Run all tests: `bundle exec rspec`
 - Run single test: `bundle exec rspec spec/path/to/file_spec.rb:LINE_NUMBER`
 - Run with verbose output: `bundle exec rspec --format documentation`
 
 ## Code Style Guidelines
+
 - Uses Standard Ruby for formatting (standardrb)
 - Models: singular, CamelCase (User)
 - Controllers: plural, CamelCase (UsersController)
