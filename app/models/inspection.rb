@@ -27,11 +27,11 @@ class Inspection < ApplicationRecord
       errors.add(:image, "cannot be larger than 10MB")
     end
   end
-  
+
   def acceptable_image
     return unless image.attached?
-    
-    unless image.blob.content_type.starts_with?('image/')
+
+    unless image.blob.content_type.starts_with?("image/")
       image.purge
       errors.add(:image, "must be an image file")
     end

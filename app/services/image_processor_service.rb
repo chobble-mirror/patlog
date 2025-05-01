@@ -5,7 +5,7 @@ class ImageProcessorService
     image.variant(
       format: :jpeg,
       resize_to_limit: [max_size, max_size],
-      saver: { quality: 75 }
+      saver: {quality: 75}
     )
   end
 end

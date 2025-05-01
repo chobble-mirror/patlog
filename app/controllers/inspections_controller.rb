@@ -127,7 +127,7 @@ class InspectionsController < ApplicationController
         .convert("jpg")
         .saver(quality: 75)
         .call
-    rescue MiniMagick::Error => err
+    rescue MiniMagick::Error
       return nil
     end
 

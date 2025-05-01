@@ -376,7 +376,7 @@ RSpec.describe Inspection, type: :model do
       expect(inspection).not_to be_valid
       expect(inspection.errors[:image]).to include("cannot be larger than 10MB")
     end
-    
+
     it "rejects non-image file attachments" do
       inspection = Inspection.new(
         user: user,
