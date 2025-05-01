@@ -8,6 +8,14 @@ class UsersController < ApplicationController
     @users = User.includes(:inspections).all
     @total_images = ActiveStorage::Attachment.where(record_type: "Inspection", name: "image").count
     @orphaned_images = ActiveStorage::Blob.left_joins(:attachments).where(active_storage_attachments: {id: nil}).count
+    @active_jobs = {
+      storage_cleanup: {
+        name: "StorageCleanupJob",
+        scheduled: StorageCleanupJob.scheduled?,
+        last_run: StorageCleanupJob.last_run_at,
+        next_run: StorageCleanupJob.next_run_at
+      }
+    }
   end
 
   def new

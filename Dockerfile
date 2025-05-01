@@ -13,7 +13,7 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 sqlite3 libvips imagemagick libyaml-dev cron && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 sqlite3 libvips imagemagick libyaml-dev && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -50,11 +50,6 @@ FROM base
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
-
-# Setup cron job first (requires root)
-RUN mkdir -p /var/log/cron
-COPY bin/setup-cron /rails/bin/setup-cron
-RUN chmod +x /rails/bin/setup-cron
 
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \

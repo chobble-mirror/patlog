@@ -18,6 +18,28 @@
       <% end %>
     </tbody>
   </table>
+  <hr>
+  <h2>Images</h2>
   <p>Total images: <%= link_to @total_images, images_all_path %></p>
   <p>Orphaned images: <%= link_to @orphaned_images, images_orphaned_path %></p>
+  <hr>
+  <h2>Background Jobs</h2>
+  <table>
+   <thead>
+      <tr>
+        <th>Job</th>
+        <th>Last Run</th>
+        <th>Next Run</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @active_jobs.each do |key, job| %>
+        <tr>
+          <td><%= job[:name] %></td>
+          <td><%= job[:last_run] ? time_ago_in_words(job[:last_run]) + " ago" : "Never" %></td>
+          <td><%= job[:next_run] ? time_ago_in_words(job[:next_run]) + " from now" : "Not scheduled" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </article>
