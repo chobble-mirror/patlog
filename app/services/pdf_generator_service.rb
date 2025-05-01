@@ -14,8 +14,6 @@ class PdfGeneratorService
     end
   end
 
-  private
-
   def self.setup_pdf_fonts(pdf)
     font_path = Rails.root.join("app", "assets", "fonts")
     pdf.font_families.update(
