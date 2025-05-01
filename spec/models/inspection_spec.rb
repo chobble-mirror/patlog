@@ -376,6 +376,31 @@ RSpec.describe Inspection, type: :model do
       expect(inspection).not_to be_valid
       expect(inspection.errors[:image]).to include("cannot be larger than 10MB")
     end
+    
+    it "rejects non-image file attachments" do
+      inspection = Inspection.new(
+        user: user,
+        inspector: "Test Inspector",
+        serial: "IMAGE003",
+        description: "Test Equipment with Non-Image File",
+        location: "Test Location",
+        equipment_class: 1,
+        visual_pass: true,
+        fuse_rating: 13,
+        earth_ohms: 0.5,
+        insulation_mohms: 200,
+        leakage: 0.2,
+        passed: true
+      )
+
+      # Attach a non-image file
+      file = fixture_file_upload(Rails.root.join("spec", "fixtures", "files", "test.txt"), "text/plain")
+      inspection.image.attach(file)
+
+      expect(inspection).not_to be_valid
+      expect(inspection.errors[:image]).to include("must be an image file")
+      expect(inspection.image).not_to be_attached
+    end
   end
 
   describe "search functionality" do

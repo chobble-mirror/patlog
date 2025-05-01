@@ -270,6 +270,50 @@ RSpec.describe "Inspections", type: :request do
         expect(inspection.image).to be_attached
         expect(inspection.user_id).to eq(user.id)
       end
+
+      it "rejects non-image file uploads and shows validation error" do
+        # Use a fixture for a text file (create one if it doesn't exist)
+        file_path = Rails.root.join("spec", "fixtures", "files", "test.txt")
+
+        # Upload the text file with text/plain content type
+        text_file = fixture_file_upload(file_path, "text/plain")
+
+        post "/inspections", params: {
+          inspection: valid_inspection_attributes.merge(
+            serial: "TEST1000",
+            description: "Test Equipment with Non-Image File",
+            image: text_file
+          )
+        }
+
+        # Should not redirect because validation failed
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("must be an image file")
+
+        # Inspection should not exist
+        expect(Inspection.find_by(serial: "TEST1000")).to be_nil
+      end
+
+      it "doesn't create any ActiveStorage attachment when non-image file is uploaded" do
+        original_attachment_count = ActiveStorage::Attachment.count
+
+        # Use a fixture for a text file
+        file_path = Rails.root.join("spec", "fixtures", "files", "test.txt")
+
+        # Upload the text file with text/plain content type
+        text_file = fixture_file_upload(file_path, "text/plain")
+
+        post "/inspections", params: {
+          inspection: valid_inspection_attributes.merge(
+            serial: "TEST1001",
+            description: "Test Equipment with Non-Image File",
+            image: text_file
+          )
+        }
+
+        # Verify no new attachment was created
+        expect(ActiveStorage::Attachment.count).to eq(original_attachment_count)
+      end
     end
 
     describe "PATCH /update" do
@@ -291,6 +335,66 @@ RSpec.describe "Inspections", type: :request do
         inspection.reload
         expect(inspection.description).to eq("Updated Equipment")
         expect(inspection.user_id).to eq(user.id)
+      end
+
+      it "rejects update with non-image file and shows validation error" do
+        # Create initial inspection
+        inspection = Inspection.create!(valid_inspection_attributes.merge(
+          serial: "TEST789",
+          user: user
+        ))
+
+        # Use a fixture for a text file
+        file_path = Rails.root.join("spec", "fixtures", "files", "test.txt")
+
+        # Upload the text file with text/plain content type
+        text_file = fixture_file_upload(file_path, "text/plain")
+
+        patch "/inspections/#{inspection.id}", params: {
+          inspection: {
+            description: "Updated with invalid file",
+            image: text_file
+          }
+        }
+
+        # Should not redirect because validation failed
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("must be an image file")
+
+        # Inspection should not be updated
+        inspection.reload
+        expect(inspection.description).not_to eq("Updated with invalid file")
+      end
+
+      it "doesn't attach non-image file during update" do
+        # Create initial inspection
+        inspection = Inspection.create!(valid_inspection_attributes.merge(
+          serial: "TEST790",
+          user: user
+        ))
+
+        # Remember initial state
+        original_attachment_count = ActiveStorage::Attachment.count
+
+        # Use a fixture for a text file
+        file_path = Rails.root.join("spec", "fixtures", "files", "test.txt")
+
+        # Upload the text file with text/plain content type
+        text_file = fixture_file_upload(file_path, "text/plain")
+
+        patch "/inspections/#{inspection.id}", params: {
+          inspection: {
+            description: "Updated with invalid file",
+            image: text_file
+          }
+        }
+
+        # No new attachment should be created
+        expect(ActiveStorage::Attachment.count).to eq(original_attachment_count)
+
+        # Confirm that no image is attached to the inspection
+        inspection.reload
+        expect(inspection.image).not_to be_attached
       end
     end
 

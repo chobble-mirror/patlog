@@ -32,10 +32,13 @@ class InspectionsController < ApplicationController
       redirect_to inspections_path and return
     end
 
-    @inspection = current_user.inspections.build(inspection_params)
-    process_attached_image(@inspection.image) if @inspection.image.attached?
+    params, image_error = process_image_params(inspection_params)
+    @inspection = current_user.inspections.build(params)
 
-    if @inspection.save
+    if image_error
+      @inspection.errors.add(:image, image_error)
+      render :new, status: :unprocessable_entity
+    elsif @inspection.save
       flash_and_redirect("created")
     else
       render :new, status: :unprocessable_entity
@@ -46,11 +49,11 @@ class InspectionsController < ApplicationController
   end
 
   def update
-    if params[:inspection][:image].present?
-      process_uploaded_image(params[:inspection][:image])
-    end
-
-    if @inspection.update(inspection_params)
+    params, image_error = process_image_params(inspection_params)
+    if image_error
+      @inspection.errors.add(:image, image_error)
+      render :edit, status: :unprocessable_entity
+    elsif @inspection.update(params)
       flash_and_redirect("updated")
     else
       render :edit, status: :unprocessable_entity
@@ -117,37 +120,26 @@ class InspectionsController < ApplicationController
   def process_image_to_jpeg(image)
     require "image_processing/mini_magick"
 
-    image_source = image.is_a?(ActionDispatch::Http::UploadedFile) ? image.path : image.download
-
-    processed = ImageProcessing::MiniMagick
-      .source(image_source)
-      .resize_to_limit(1200, 1200)
-      .convert("jpg")
-      .saver(quality: 80)
-      .call
+    begin
+      processed = ImageProcessing::MiniMagick
+        .source(image.path)
+        .resize_to_limit(1200, 1200)
+        .convert("jpg")
+        .saver(quality: 75)
+        .call
+    rescue MiniMagick::Error => err
+      return nil
+    end
 
     File.read(processed.path)
   end
 
-  def process_attached_image(image)
-    return if image.content_type == "image/jpeg"
-
-    blob = create_jpeg_blob(image, "#{image.filename.base}.jpg")
-    image.purge
-    image.attach(blob)
-  end
-
-  def process_uploaded_image(image)
-    return if image.content_type == "image/jpeg"
-
-    blob = create_jpeg_blob(image, "#{image.original_filename.split(".")[0]}.jpg")
-    @inspection.image.attach(blob)
-    params[:inspection].delete(:image)
-  end
-
   def create_jpeg_blob(image, filename)
+    jpeg = process_image_to_jpeg(image)
+    return nil unless jpeg
+
     ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new(process_image_to_jpeg(image)),
+      io: StringIO.new(jpeg),
       filename: filename,
       content_type: "image/jpeg"
     )
@@ -156,6 +148,20 @@ class InspectionsController < ApplicationController
   def flash_and_redirect(action)
     flash[:success] = "Inspection record #{action}"
     redirect_to (action == "deleted") ? inspections_path : @inspection
+  end
+
+  def process_image_params(params)
+    image = params.delete(:image)
+    return [params, nil] unless image
+
+    filename = "#{image.original_filename.split(".")[0]}.jpg"
+    if (jpeg_blob = create_jpeg_blob(image, filename))
+      params[:image] = jpeg_blob.signed_id
+    else
+      error = "must be an image file"
+    end
+
+    [params, error]
   end
 
   def inspections_to_csv
