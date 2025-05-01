@@ -16,9 +16,7 @@
       <tr>
         <td>
           <% if inspection.image.attached? %>
-            <%= link_to inspection_path(inspection) do %>
-              <%= image_tag url_for(inspection.image.variant(resize_to_limit: [64, 64])) %>
-            <% end %>
+            <%= link_to display_image(inspection.image, :thumbnail), inspection_path(inspection) %>
           <% else %>
             <small>No image</small>
           <% end %>

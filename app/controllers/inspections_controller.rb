@@ -123,6 +123,7 @@ class InspectionsController < ApplicationController
       .source(image_source)
       .resize_to_limit(1200, 1200)
       .convert("jpg")
+      .saver(quality: 80)
       .call
 
     File.read(processed.path)

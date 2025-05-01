@@ -1,20 +1,21 @@
 class ImageProcessorService
-  def self.process(image)
+  def self.process(image, max_size = 1200)
     return nil unless image.attached?
 
-    # Process to jpeg if not already
-    if image.content_type != "image/jpeg"
-      image.variant(format: :jpeg)
-    end
-
-    # Generate full-size variant - max 1200px on longest side
-    image.variant(resize_to_limit: [1200, 1200])
+    image.variant(
+      format: :jpeg,
+      resize_to_limit: [max_size, max_size],
+      quality: 80
+    )
   end
 
   def self.thumbnail(image)
     return nil unless image.attached?
 
-    # Generate thumbnail - max 64px on longest side
-    image.variant(format: :jpeg, resize_to_limit: [64, 64])
+    image.variant(
+      format: :jpeg,
+      resize_to_limit: [64, 64],
+      quality: 80
+    )
   end
 end
