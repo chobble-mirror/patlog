@@ -1,4 +1,4 @@
-# PAT Inspection Logger
+# patlog - A PAT Inspection Logger
 
 A Ruby on Rails application for managing Portable Appliance Testing (PAT) inspections and generating certificates with QR codes for verification.
 
