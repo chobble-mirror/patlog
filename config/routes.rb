@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     member do
       get "change_password"
       patch "update_password"
+      post "impersonate"
     end
   end
 

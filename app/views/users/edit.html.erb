@@ -31,3 +31,13 @@
 
   <%= form.submit "Update User" %>
 <% end %>
+
+<% if @user != current_user %>
+  <article>
+    <%= button_to "Log in as #{@user.email}", impersonate_user_path(@user), method: :post, 
+        data: { confirm: "You will be logged in as #{@user.email}. You'll need to log out to return to your admin account." } %>
+  </article>
+  <article>
+    <%= button_to "Delete", user_path(@user), method: :delete, data: { confirm: "Are you sure?" } %>
+  </article>
+<% end %>

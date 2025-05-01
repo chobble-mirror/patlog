@@ -1,11 +1,11 @@
 class UsersController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
-  before_action :require_admin, only: [:index, :edit, :update, :destroy]
-  before_action :set_user, only: [:edit, :update, :destroy, :change_password, :update_password]
+  before_action :require_admin, only: [:index, :edit, :update, :destroy, :impersonate]
+  before_action :set_user, only: [:edit, :update, :destroy, :change_password, :update_password, :impersonate]
   before_action :require_correct_user, only: [:change_password, :update_password]
 
   def index
-    @users = User.all
+    @users = User.includes(:inspections).all
   end
 
   def new
@@ -56,6 +56,12 @@ class UsersController < ApplicationController
       @user.errors.add(:current_password, "is incorrect")
       render :change_password, status: :unprocessable_entity
     end
+  end
+
+  def impersonate
+    log_in @user
+    flash[:success] = "You are now impersonating #{@user.email}"
+    redirect_to root_path
   end
 
   private

@@ -3,25 +3,20 @@
 </header>
 
 <article>
-  <table>
+  <table class="users">
     <thead>
       <tr>
         <th>Email</th>
         <th>Admin</th>
-        <th>Actions</th>
+        <th>Inspections</th>
       </tr>
     </thead>
     <tbody>
       <% @users.each do |user| %>
         <tr>
-          <td><%= user.email %></td>
+          <td><%= link_to user.email, edit_user_path(user) %></td>
           <td><%= user.admin? ? "Yes" : "No" %></td>
-          <td>
-            <%= link_to edit_user_path(user) do %><em>Edit</em><% end %>
-            <% unless user == current_user %>
-              <%= button_to "Delete", user_path(user), method: :delete, data: { confirm: "Are you sure?" } %>
-            <% end %>
-          </td>
+          <td><%= user.inspections.count %></td>
         </tr>
       <% end %>
     </tbody>
