@@ -5,6 +5,7 @@ class InspectionsController < ApplicationController
 
   def index
     @inspections = current_user.inspections.order(created_at: :desc)
+    @title = "Existing Inspections"
 
     respond_to do |format|
       format.html
@@ -69,6 +70,12 @@ class InspectionsController < ApplicationController
     @inspections = params[:query].present? ?
       current_user.inspections.search(params[:query]) :
       current_user.inspections
+  end
+
+  def overdue
+    @inspections = current_user.inspections.overdue.order(created_at: :desc)
+    @title = "Overdue Inspections"
+    render :index
   end
 
   def certificate

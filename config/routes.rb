@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   resources :inspections do
     collection do
       get "search"
+      get "overdue"
     end
     member do
       get "certificate"

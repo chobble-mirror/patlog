@@ -1,5 +1,5 @@
 <header>
-  <h1>Existing Inspections</h1>
+  <h1><%= @title %></h1>
 </header>
 
 <section>
@@ -8,6 +8,7 @@
 
 <article>
   <% if @inspections.any? %>
+    <%= inspection_links(current_user) %>
     <%= render 'inspections_table', inspections: @inspections %>
     <div class="center">
       <p>

@@ -5,7 +5,7 @@ module UsersHelper
 
   def inspection_count(user)
     count = user.inspections.count
-    "#{count} #{count == 1 ? 'inspection' : 'inspections'}"
+    "#{count} #{(count == 1) ? "inspection" : "inspections"}"
   end
 
   def format_job_time(time)

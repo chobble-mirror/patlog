@@ -15,6 +15,10 @@ class Inspection < ApplicationRecord
     where("serial LIKE ?", "%#{query}%")
   end
 
+  def self.overdue
+    where("reinspection_date < ?", Date.today)
+  end
+
   private
 
   def generate_id
