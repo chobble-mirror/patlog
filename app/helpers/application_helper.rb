@@ -4,7 +4,7 @@ module ApplicationHelper
 
     variant = case size
     when :thumbnail
-      ImageProcessorService.thumbnail(image)
+      ImageProcessorService.process(image, 200)
     when :medium
       ImageProcessorService.process(image, 800)
     when :large
