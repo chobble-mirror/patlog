@@ -21,6 +21,7 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             ruby_3_4
+            rubyPackages_3_4.ruby-vips
             rubyPackages_3_4.psych
             sqlite
             nodejs
