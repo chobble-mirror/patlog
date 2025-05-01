@@ -74,6 +74,7 @@ Rails.application.configure do
 
   # Configure Active Storage
   config.active_storage.service = :local
+  config.active_storage.service_urls_expire_in = 1.hour
 
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [:id]
