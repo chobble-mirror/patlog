@@ -12,6 +12,19 @@ A Ruby on Rails application for managing Portable Appliance Testing (PAT) inspec
 
 ## Setup
 
+### Docker Installation
+
+The easiest way to install PAT Logger is using Docker:
+
+```
+docker pull dockerstefn/patlog
+docker run -p 3000:3000 dockerstefn/patlog
+```
+
+Visit http://localhost:3000 in your browser.
+
+### Manual Installation
+
 1. Clone the repository
 2. Install dependencies:
    ```
