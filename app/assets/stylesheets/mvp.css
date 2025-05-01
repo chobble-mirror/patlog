@@ -295,7 +295,6 @@ sup {
 /* Links */
 a {
   color: var(--color-link);
-  display: inline-block;
   text-decoration: underline;
 }
 

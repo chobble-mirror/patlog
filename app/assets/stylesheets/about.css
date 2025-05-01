@@ -1,6 +1,5 @@
-@media (max-width: 789px) {
-  article.about {
-    text-wrap: balance;
-    text-wrap: pretty;
-  }
+article.about {
+  max-width: 60rem;
+  margin: 0 auto;
+  text-wrap: pretty;
 }
