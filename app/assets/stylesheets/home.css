@@ -19,7 +19,7 @@
   .video-container {
     margin: 2rem auto;
     position: relative;
-    padding-top: 56.25%;
+    aspect-ratio: 16/9;
     max-width: 40rem;
     border-radius: 5px;
     overflow: hidden;
