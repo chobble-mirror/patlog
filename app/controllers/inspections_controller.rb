@@ -1,6 +1,7 @@
 class InspectionsController < ApplicationController
   before_action :set_inspection, only: [:show, :edit, :update, :destroy, :certificate, :qr_code]
   before_action :check_inspection_owner, only: [:show, :edit, :update, :destroy]
+  before_action :no_index
   skip_before_action :require_login, only: [:certificate, :qr_code]
 
   def index
@@ -97,7 +98,7 @@ class InspectionsController < ApplicationController
   end
 
   private
-
+  
   def inspection_params
     params.require(:inspection).permit(
       :inspection_date, :reinspection_date, :inspector, :serial,
@@ -106,6 +107,10 @@ class InspectionsController < ApplicationController
       :passed, :comments, :image, :appliance_plug_check, :equipment_power,
       :load_test, :rcd_trip_time, :manufacturer
     )
+  end
+
+  def no_index
+    response.set_header("X-Robots-Tag", "noindex,nofollow")
   end
 
   def set_inspection
