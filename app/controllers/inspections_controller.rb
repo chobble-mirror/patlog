@@ -41,6 +41,10 @@ class InspectionsController < ApplicationController
       @inspection.errors.add(:image, image_error)
       render :new, status: :unprocessable_entity
     elsif @inspection.save
+      if Rails.env.production?
+        NtfyService.notify("new inspection by #{current_user.email}")
+      end
+
       flash_and_redirect("created")
     else
       render :new, status: :unprocessable_entity
@@ -98,7 +102,7 @@ class InspectionsController < ApplicationController
   end
 
   private
-  
+
   def inspection_params
     params.require(:inspection).permit(
       :inspection_date, :reinspection_date, :inspector, :serial,

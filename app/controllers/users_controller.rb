@@ -25,6 +25,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
+      if Rails.env.production?
+        NtfyService.notify("new user: #{@user.email}")
+      end
+
       log_in @user
       flash[:success] = "Account created"
       redirect_to root_path
