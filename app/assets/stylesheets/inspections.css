@@ -1,13 +1,14 @@
 table.inspections {
-	tr {
-		td:first-child {
-			padding: 0.4rem 0.8rem 0.4rem 0.4rem;
-			img {
-				display: block;
-				aspect-ratio: 1;
-				object-fit: cover;
-				width: 100%;
-			}
-		}
-	}
+  tr {
+    td:first-child {
+      padding: 0.4rem 0.8rem 0.4rem 0.4rem;
+      text-align: center;
+      img {
+        display: block;
+        aspect-ratio: 1;
+        object-fit: cover;
+        width: 100%;
+      }
+    }
+  }
 }
