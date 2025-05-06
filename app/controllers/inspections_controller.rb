@@ -86,6 +86,8 @@ class InspectionsController < ApplicationController
   def certificate
     pdf_data = PdfGeneratorService.generate_certificate(@inspection)
 
+    @inspection.update(pdf_last_accessed_at: Time.current)
+
     send_data pdf_data.render,
       filename: "PAT_Certificate_#{@inspection.serial}.pdf",
       type: "application/pdf",
