@@ -8,12 +8,17 @@ class User < ApplicationRecord
 
   before_create :set_default_inspection_limit
   before_create :set_admin_if_first_user
+  before_save :downcase_email
 
   def can_create_inspection?
     inspection_limit == -1 || inspections.count < inspection_limit
   end
 
   private
+
+  def downcase_email
+    self.email = email.downcase
+  end
 
   def set_default_inspection_limit
     env_limit = ENV["LIMIT_INSPECTIONS"]

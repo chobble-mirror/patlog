@@ -69,7 +69,6 @@ class PdfGeneratorService
 
     results = [
       ["Inspection Date", inspection.inspection_date&.strftime("%d/%m/%Y")],
-      ["Re-inspection Due", inspection.reinspection_date&.strftime("%d/%m/%Y")],
       ["Inspector", inspection.inspector],
       ["Visual Inspection", inspection.visual_pass ? "PASS" : "FAIL"],
       ["Appliance Plug Check", inspection.appliance_plug_check ? "PASS" : "FAIL"],
